@@ -12,7 +12,7 @@ export const InventoryTable = ({ items, onEdit }) => {
                     <th className="py-2">Item Name</th>
                     <th className="py-2">Category</th>
                     <th className="py-2">Quantity</th>
-                    <th className="py-2">Status</th>
+                    <th className="py-2">Added At</th>
                     <th className="py-2">Last Updated</th>
                     <th className="py-2">Actions</th>
                 </tr>
@@ -23,13 +23,9 @@ export const InventoryTable = ({ items, onEdit }) => {
                     <tr key={index} className="border-b">
                         <td className="py-2">{item.name}</td>
                         <td className="py-2">{item.category}</td>
-                        <td className="py-2">{item.quantity}</td>
-                        <td className="py-2">
-                            <span className={`bg-${item.statusColor}-100 text-${item.statusColor}-800 px-2 py-1 rounded-full text-sm`}>
-                                {item.status}
-                            </span>
-                        </td>
-                        <td className="py-2">{item.lastUpdated}</td>
+                        <td className="py-2">{item.total_quantity}</td>
+                        <td className="py-2">{item.created_at}</td>
+                        <td className="py-2">{item.updated_at}</td>
                         <td className="py-2">
                             <button onClick={onEdit} className="text-blue-600 mr-2">
                                 <FontAwesomeIcon icon="pen-to-square" />
