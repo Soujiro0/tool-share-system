@@ -84,9 +84,9 @@ export async function createBorrowRequest(borrowData, token) {
  * Get Items API: GET /api/items.php
  * Requires JWT Bearer token in Authorization header.
  */
-export async function getItems(token) {
+export async function getItems(token, limit = 10, page = 1) {
     try {
-        const response = await fetch(`${API_BASE}/items.php`, {
+        const response = await fetch(`${API_BASE}/items.php?limit=${limit}&page=${page}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -98,6 +98,7 @@ export async function getItems(token) {
             throw new Error(errorData.message || 'Error fetching items');
         }
         const data = await response.json();
+        console.log(data);
         return data;
     } catch (error) {
         console.error('Get Items API error:', error);

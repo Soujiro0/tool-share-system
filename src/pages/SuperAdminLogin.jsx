@@ -27,13 +27,6 @@ export const SuperAdminLogin = () => {
     return (
         <div className="bg-gray-100 flex items-center justify-center min-h-screen text-center w-full">
             <div>
-                <img
-                    alt="Admin icon"
-                    className="mx-auto mb-4"
-                    height="50"
-                    src="https://storage.googleapis.com/a1aa/image/K1si6rzk0k7IXyq7N3xMxYpYVq50_eQXR93gZ1P_D0U.jpg"
-                    width="50"
-                />
                 <h1 className="text-2xl font-bold text-gray-900">Super Admin Login</h1>
                 <p className="text-gray-600 mb-5">Sign in to access your Super Admin Dashboard</p>
                 <LoginForm handleSubmit={handleSubmit} setUser={setUsername} setPassword={setPassword}/>
