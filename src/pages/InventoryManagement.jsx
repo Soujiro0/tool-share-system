@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from "react";
-import { getItems } from "../api/ApiService";
+import { createItem, deleteItem, getCategories, getItems, updateItem } from "../api/ApiService";
+import ItemForm from "../components/forms/ItemForm";
 import Header from "../components/layout/Header";
 import InventoryTable from "../components/tables/InvententoryTable";
 import ActivityLog from "../components/tracking/ActivityLog";
@@ -20,71 +21,92 @@ export const InventoryManagement = () => {
     const [totalPages, setTotalPages] = useState(1);
 
     const [items, setItems] = useState([]);
+    const [categories, setCategories] = useState([]);
+    const [editingItem, setEditingItem] = useState({});
+
     const activityLogs = [
         { message: "Added new item: Laptop Dell XPS 13", timestamp: "Jan 15, 2025 - 10:30 AM", icon: "plus", color: "blue" },
         { message: "Updated quantity: Office Chair (5 → 3)", timestamp: "Jan 14, 2025 - 2:15 PM", icon: "pen", color: "yellow" },
         { message: "Deleted item: Desk Lamp", timestamp: "Jan 14, 2025 - 11:45 AM", icon: "trash", color: "red" },
     ];
 
-    useEffect(() => {
-        const fetchItems = async () => {
-            try {
-                const data = await getItems(token, limit, page);
-                const totalItems = data.totalItems;
-                setTotalPages(Math.ceil(totalItems / limit));
-                setItems(data.items);
-            } catch (error) {
-                console.error("Error fetching items:", error);
-            } 
-        };
-        fetchItems();
-    }, [page, limit, token]);
+    const fetchItems = async () => {
+        try {
+            const data = await getItems(token, limit, page);
+            setTotalPages(Math.ceil(data.totalItems / limit));
+            setItems(data.items);
+        } catch (error) {
+            console.error("Error fetching items:", error);
+        }
+    };
 
-    const handleAdd = () => {
-        setModalContent(
-            <div>
-                <h2 className="text-xl font-bold mb-4">Add New Item</h2>
-                <input type="text" placeholder="Item Name" className="border border-gray-300 rounded-md p-2 w-full mb-2" />
-                <input type="text" placeholder="Category" className="border border-gray-300 rounded-md p-2 w-full mb-2" />
-                <input type="number" placeholder="Quantity" className="border border-gray-300 rounded-md p-2 w-full mb-2" />
-                <select className="border border-gray-300 rounded-md p-2 w-full mb-2">
-                    <option>Status</option>
-                    <option>Good</option>
-                    <option>Need Maintenance</option>
-                </select>
-                <input type="date" className="border border-gray-300 rounded-md p-2 w-full mb-2" />
-                <button className="bg-blue-600 text-white px-4 py-2 rounded-md w-full">Add Item</button>
-            </div>
-        );
+    const fetchCategories = async () => {
+        try {
+            const data = await getCategories(token);
+            setCategories(data);
+        } catch (error) {
+            console.error("Error fetching categories:", error);
+        }
+    };
+
+    useEffect(() => {
+        fetchItems();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [token, page, limit]);
+
+    useEffect(() => {
+        fetchCategories();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [token]);
+
+    const handleAddItem = () => {
+        setEditingItem(null); // Reset editing
+        setModalContent(<ItemForm categories={categories} onSubmit={handleAddOrUpdateItem} />);
         setModalOpen(true);
     };
 
-    const handleEdit = (item) => {
-        setModalContent(
-            <div>
-                <h2 className="text-xl font-bold mb-4">Edit Item</h2>
-                <input type="text" defaultValue={item.name} className="border border-gray-300 rounded-md p-2 w-full mb-2" />
-                <input type="text" defaultValue={item.category} className="border border-gray-300 rounded-md p-2 w-full mb-2" />
-                <input type="number" defaultValue={item.quantity} className="border border-gray-300 rounded-md p-2 w-full mb-2" />
-                <select className="border border-gray-300 rounded-md p-2 w-full mb-2" defaultValue={item.status}>
-                    <option>Good</option>
-                    <option>Need Maintenance</option>
-                </select>
-                <input type="date" defaultValue={item.lastUpdated} className="border border-gray-300 rounded-md p-2 w-full mb-2" />
-                <button className="bg-green-600 text-white px-4 py-2 rounded-md w-full">Save Changes</button>
-            </div>
-        );
+    const handleUpdateItem = (item) => {
+        setEditingItem({ ...item });
+        setModalContent(<ItemForm categories={categories} initialData={item} onSubmit={handleAddOrUpdateItem} />);
         setModalOpen(true);
+    };
+    
+    const handleDeleteItem = async (item) => {
+        try {
+            await deleteItem(token, item.id);
+            fetchItems();
+        } catch (error) {
+            console.error("Error deleting item:", error);
+        }
+    }
+
+    // ✅ Handles adding and updating an item
+    const handleAddOrUpdateItem = async (item) => {
+        try {
+            console.log(editingItem);
+            if (editingItem) {
+                await updateItem(token, item.id, item);
+                fetchItems();
+            } else {
+                await createItem(token, item);
+                fetchItems();
+            }
+        } catch (error) {
+            console.error("Error saving item:", error);
+        } finally {
+            setEditingItem(null);
+            setModalOpen(false);
+        }
     };
 
     return (
         <>
             <div className="w-full mx-auto">
-                <Header onAdd={handleAdd} />
+                <Header onAdd={handleAddItem} />
                 <div className="p-5">
                     <div className="bg-white p-4 rounded-md shadow-md mb-6">
-                        <Filters />
-                        <InventoryTable items={items} onEdit={handleEdit} />
+                        <Filters categories={categories} />
+                        <InventoryTable items={items} onEdit={handleUpdateItem} onDelete={handleDeleteItem} />
                         <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} />
                     </div>
                     <div className="bg-white p-4 rounded-md shadow-md">

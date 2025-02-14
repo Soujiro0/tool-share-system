@@ -1,10 +1,9 @@
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import PropTypes from "prop-types";
-library.add(fas); 
+library.add(fas);
 
-export const InventoryTable = ({ items, onEdit }) => {
+export const InventoryTable = ({ items, onEdit, onDelete }) => {
     return (
         <table className="w-full text-left">
             <thead>
@@ -18,7 +17,6 @@ export const InventoryTable = ({ items, onEdit }) => {
                 </tr>
             </thead>
             <tbody>
-                
                 {items.map((item, index) => (
                     <tr key={index} className="border-b">
                         <td className="py-2">{item.name}</td>
@@ -27,10 +25,10 @@ export const InventoryTable = ({ items, onEdit }) => {
                         <td className="py-2">{item.created_at}</td>
                         <td className="py-2">{item.updated_at}</td>
                         <td className="py-2">
-                            <button onClick={onEdit} className="text-blue-600 mr-2">
+                            <button onClick={() => onEdit(item)} className="text-blue-600 mr-2">
                                 <FontAwesomeIcon icon="pen-to-square" />
                             </button>
-                            <button className="text-red-600">
+                            <button onClick={() => onDelete(item)} className="text-red-600">
                                 <FontAwesomeIcon icon="trash" />
                             </button>
                         </td>
@@ -42,7 +40,4 @@ export const InventoryTable = ({ items, onEdit }) => {
 };
 export default InventoryTable;
 
-InventoryTable.propTypes = {
-    items: PropTypes.array.isRequired,
-    onEdit: PropTypes.func.isRequired,
-}
+InventoryTable.propTypes
