@@ -35,6 +35,7 @@ export const Filters = ({ categories }) => {
         </div>
     );
 };
-export default Filters;
 
 Filters.propTypes;
+
+export default Filters;

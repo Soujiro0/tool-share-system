@@ -25,7 +25,10 @@ export const InventoryTable = ({ items, onEdit, onDelete }) => {
                         <td className="py-2">{item.created_at}</td>
                         <td className="py-2">{item.updated_at}</td>
                         <td className="py-2">
-                            <button onClick={() => onEdit(item)} className="text-blue-600 mr-2">
+                            <button onClick={() => {
+                                onEdit(item);
+                                console.log("item: ", item)
+                            }} className="text-blue-600 mr-2">
                                 <FontAwesomeIcon icon="pen-to-square" />
                             </button>
                             <button onClick={() => onDelete(item)} className="text-red-600">
@@ -38,6 +41,7 @@ export const InventoryTable = ({ items, onEdit, onDelete }) => {
         </table>
     );
 };
-export default InventoryTable;
 
-InventoryTable.propTypes
+InventoryTable.propTypes;
+
+export default InventoryTable;

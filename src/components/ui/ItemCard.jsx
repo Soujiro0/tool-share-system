@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 
 export const ItemCard = ({ name, availability, availableQuantity }) => {
     return (
@@ -17,10 +16,7 @@ export const ItemCard = ({ name, availability, availableQuantity }) => {
         </div>
     );
 };
-export default ItemCard;
 
-ItemCard.propTypes = {
-    name: PropTypes.string.isRequired,
-    availability: PropTypes.bool.isRequired,
-    availableQuantity: PropTypes.number,
-}
+ItemCard.propTypes
+
+export default ItemCard;

@@ -12,7 +12,7 @@ const Landing = () => {
                 <Link to="/borrower-form" className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-700 transition">
                     Borrow an Item
                 </Link>
-                <Link to="/admin-login" className="bg-gray-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-gray-700 transition">
+                <Link to="/admin" className="bg-gray-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-gray-700 transition">
                     Admin Login
                 </Link>
             </div>

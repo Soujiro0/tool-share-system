@@ -8,8 +8,8 @@ const ItemForm = ({ categories, initialData = null, onSubmit }) => {
     }, [initialData]);
 
     const handleSubmit = (e) => {
-        e.preventDefault(); // ✅ Prevents refresh
-        onSubmit(data); // ✅ Sends data to parent
+        e.preventDefault();
+        onSubmit(data);
     };
 
     return (
@@ -38,13 +38,20 @@ const ItemForm = ({ categories, initialData = null, onSubmit }) => {
                     className="border border-gray-300 rounded-md p-2 w-full mb-2"
                     required
                 >
-                    <option value="" disabled>Select a Category</option>
+                    <option value="" disabled>
+                        Select a Category
+                    </option>
                     {categories.map((category) => (
-                        <option key={category.id} value={category.name}>{category.name}</option>
+                        <option key={category.id} value={category.name}>
+                            {category.name}
+                        </option>
                     ))}
                 </select>
-                <button type="submit" className="text-white px-4 py-2 rounded-md w-full mt-5"
-                    style={{ backgroundColor: initialData ? "green" : "blue" }}>
+                <button
+                    type="submit"
+                    className="text-white px-4 py-2 rounded-md w-full mt-5"
+                    style={{ backgroundColor: initialData ? "green" : "blue" }}
+                >
                     {initialData ? "Update Item" : "Add Item"}
                 </button>
             </form>
@@ -52,6 +59,6 @@ const ItemForm = ({ categories, initialData = null, onSubmit }) => {
     );
 };
 
-export default ItemForm;
+ItemForm.propTypes;
 
-ItemForm.propTypes
+export default ItemForm;

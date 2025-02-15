@@ -1,7 +1,6 @@
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faS } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import PropTypes from "prop-types";
 library.add(faS);
 
 export const InputField = ({ label, id, type, icon, setValue }) => {
@@ -25,12 +24,7 @@ export const InputField = ({ label, id, type, icon, setValue }) => {
         </div>
     );
 };
-export default InputField;
 
-InputField.propTypes = {
-    label: PropTypes.string.isRequired,
-    id: PropTypes.any,
-    type: PropTypes.string.isRequired,
-    icon: PropTypes.any,
-    setValue: PropTypes.any,
-}
+InputField.propTypes;
+
+export default InputField;
