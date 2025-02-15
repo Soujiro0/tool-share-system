@@ -1,7 +1,3 @@
-// src/components/Pagination.jsx
-
-import PropTypes from "prop-types";
-
 export const Pagination = ({ currentPage, totalPages, onPageChange }) => {
     if (totalPages <= 1) return null;
 
@@ -21,7 +17,11 @@ export const Pagination = ({ currentPage, totalPages, onPageChange }) => {
             <nav className="mt-10 mb-2 flex justify-end">
                 <ul className="flex gap-5 list-none">
                     <li>
-                        <button className="p-1 bg-amber-50 rounded-2xl" onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
+                        <button
+                            className="p-1 bg-amber-50 rounded-2xl"
+                            onClick={() => handlePageChange(currentPage - 1)}
+                            disabled={currentPage === 1}
+                        >
                             Previous
                         </button>
                     </li>
@@ -40,7 +40,11 @@ export const Pagination = ({ currentPage, totalPages, onPageChange }) => {
                         </li>
                     ))}
                     <li>
-                        <button className="p-1 bg-amber-50 rounded-2xl" onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}>
+                        <button
+                            className="p-1 bg-amber-50 rounded-2xl"
+                            onClick={() => handlePageChange(currentPage + 1)}
+                            disabled={currentPage === totalPages}
+                        >
                             Next
                         </button>
                     </li>
@@ -50,10 +54,6 @@ export const Pagination = ({ currentPage, totalPages, onPageChange }) => {
     );
 };
 
-export default Pagination;
+Pagination.propTypes;
 
-Pagination.propTypes = {
-    currentPage: PropTypes.number,
-    totalPages: PropTypes.number,
-    onPageChange: PropTypes.func,
-};
+export default Pagination;

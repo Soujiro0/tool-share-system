@@ -17,9 +17,10 @@ export const SelectField = ({ icon, options }) => {
         </div>
     );
 };
-export default SelectField;
 
 SelectField.propTypes = {
     icon: PropTypes.any.isRequired,
     options: PropTypes.array.isRequired,
 }
+
+export default SelectField;

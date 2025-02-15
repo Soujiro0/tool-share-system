@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import InputField from "../ui/InputField";
 
 export const LoginForm = ({ handleSubmit, setUser, setPassword }) => {
@@ -14,9 +13,7 @@ export const LoginForm = ({ handleSubmit, setUser, setPassword }) => {
         </div>
     );
 };
+
+LoginForm.propTypes;
+
 export default LoginForm;
-LoginForm.propTypes = {
-    handleSubmit: PropTypes.func.isRequired,
-    setUser: PropTypes.string.isRequired,
-    setPassword: PropTypes.string.isRequired,
-}

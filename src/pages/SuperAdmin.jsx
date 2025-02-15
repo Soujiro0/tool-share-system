@@ -1,6 +1,6 @@
 import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { loginApi } from "../api/ApiService";
+import { ApiService } from "../api/ApiService";
 import LoginForm from "../components/forms/LoginForm";
 import { AuthContext } from "../context/AuthContext";
 
@@ -13,11 +13,8 @@ export const SuperAdminLogin = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            // Call the API to get the JWT token
-            const data = await loginApi(username, password);
-            // Update the AuthContext with the token
+            const data = await ApiService.LoginService.loginApi(username, password);
             login(data.token);
-            // Redirect to the protected dashboard
             navigate("/inventory");
         } catch (error) {
             alert(error.message);
@@ -32,7 +29,7 @@ export const SuperAdminLogin = () => {
                 <LoginForm handleSubmit={handleSubmit} setUser={setUsername} setPassword={setPassword}/>
                 <p className="my-3">Switch to:</p>
                 <Link
-                    to="/admin-login"
+                    to="/admin"
                     className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 block mt-2"
                 >
                     <span>Admin Login</span>

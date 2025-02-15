@@ -1,7 +1,5 @@
 import { jwtDecode } from "jwt-decode";
-import PropTypes from 'prop-types';
 import { createContext, useEffect, useState } from 'react';
-
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const AuthContext = createContext();
@@ -60,6 +58,5 @@ export const AuthProvider = ({ children }) => {
         </AuthContext.Provider>
     );
 };
-AuthProvider.propTypes = {
-    children: PropTypes.any,
-}
+
+AuthProvider.propTypes;

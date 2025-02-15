@@ -2,7 +2,6 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import { faS } from "@fortawesome/free-solid-svg-icons";
 library.add(faS);
 
-
 export const Navbar = () => {
     return (
         <nav className="bg-blue-600 text-white p-4 flex justify-between items-center">
@@ -12,4 +11,5 @@ export const Navbar = () => {
         </nav>
     );
 };
+
 export default Navbar;
