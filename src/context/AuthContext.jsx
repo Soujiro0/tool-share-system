@@ -25,6 +25,7 @@ export const AuthProvider = ({ children }) => {
         if (token) {
             try {
                 const decoded = jwtDecode(token);
+                console.log(decoded);
                 setAuth({ token, user: decoded });
             } catch (error) {
                 console.error('Token decode failed:', error);

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 const ItemForm = ({ categories, initialData = null, onSubmit }) => {
-    const [data, setData] = useState({ name: "", total_quantity: 0, category: "" });
+    const [data, setData] = useState({ name: "", total_quantity: 0, category: "", category_id: 0 });
 
     useEffect(() => {
         if (initialData) setData(initialData);
@@ -33,8 +33,15 @@ const ItemForm = ({ categories, initialData = null, onSubmit }) => {
                     required
                 />
                 <select
-                    value={data.category}
-                    onChange={(e) => setData({ ...data, category: e.target.value })}
+                    value={data.category || ""}
+                    onChange={(e) => {
+                        const selectedCategory = categories.find((cat) => cat.name === e.target.value);
+                        setData({
+                            ...data,
+                            category: selectedCategory.name, // Store category name
+                            category_id: selectedCategory.id, // Store category ID
+                        });
+                    }}
                     className="border border-gray-300 rounded-md p-2 w-full mb-2"
                     required
                 >
@@ -47,6 +54,7 @@ const ItemForm = ({ categories, initialData = null, onSubmit }) => {
                         </option>
                     ))}
                 </select>
+
                 <button
                     type="submit"
                     className="text-white px-4 py-2 rounded-md w-full mt-5"

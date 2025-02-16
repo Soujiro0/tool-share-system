@@ -1,4 +1,3 @@
-// src/api/ItemService.js
 import { API_BASE } from './config';
 
 export async function getItems(token, limit = 10, page = 1) {
@@ -31,6 +30,7 @@ export async function createItem(token, itemData) {
             },
             body: JSON.stringify(itemData),
         });
+
         if (!response.ok) {
             const errorData = await response.json();
             throw new Error(errorData.message || 'Error creating item');

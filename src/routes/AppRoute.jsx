@@ -1,14 +1,15 @@
 import { Outlet, Route, Routes } from "react-router-dom";
 import Navbar from "../components/layout/Navbar";
 import Sidebar from "../components/layout/Sidebar";
+import ActivityLogs from "../pages/ActivityLogs";
 import Admin from "../pages/Admin";
+import AdminAccounts from "../pages/AdminAccounts";
 import BorrowingForm from "../pages/BorrowingForm";
 import ConditionReport from "../pages/ConditionReports";
 import Dashboard from "../pages/Dashboard";
 import InventoryManagement from "../pages/InventoryManagement";
 import Landing from "../pages/Landing";
 import Settings from "../pages/Settings";
-import SuperAdmin from "../pages/SuperAdmin";
 import Transactions from "../pages/Transactions";
 import ProtectedRoute from "./ProtectedRoute";
 
@@ -23,7 +24,9 @@ const WithNavbar = () => (
 const WithSidebar = () => (
     <div className="flex">
         <Sidebar />
-        <Outlet />
+        <div className="ml-64 w-full p-5 overflow-auto">
+            <Outlet />
+        </div>
     </div>
 );
 
@@ -42,12 +45,22 @@ export const AppRoute = () => {
                 <Route path="/inventory" element={<InventoryManagement />} />
                 <Route path="/transactions" element={<Transactions />} />
                 <Route path="/condition-reports" element={<ConditionReport />} />
+                <Route path="/activity-logs" element={<ActivityLogs />} />
                 <Route path="/settings" element={<Settings />} />
+            </Route>
+            {/* Admin Accounts route available only for super_admin */}
+            <Route
+                element={
+                    <ProtectedRoute requiredRole="super_admin">
+                        <WithSidebar />
+                    </ProtectedRoute>
+                }
+            >
+                <Route path="/admin-accounts" element={<AdminAccounts />} />
             </Route>
             <Route element={<WithNavbar />}>
                 <Route path="/" element={<Landing />} />
                 <Route path="/admin" element={<Admin />} />
-                <Route path="/super-admin" element={<SuperAdmin  />} />
                 <Route path="/borrower-form" element={<BorrowingForm />} />
             </Route>
         </Routes>

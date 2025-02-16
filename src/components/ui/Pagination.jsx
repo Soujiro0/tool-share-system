@@ -14,11 +14,11 @@ export const Pagination = ({ currentPage, totalPages, onPageChange }) => {
 
     return (
         <>
-            <nav className="mt-10 mb-2 flex justify-end">
+            <nav className="mt-3 mb-2 flex justify-end">
                 <ul className="flex gap-5 list-none">
                     <li>
                         <button
-                            className="p-1 bg-amber-50 rounded-2xl"
+                            className="p-1 rounded-2xl"
                             onClick={() => handlePageChange(currentPage - 1)}
                             disabled={currentPage === 1}
                         >
@@ -41,7 +41,7 @@ export const Pagination = ({ currentPage, totalPages, onPageChange }) => {
                     ))}
                     <li>
                         <button
-                            className="p-1 bg-amber-50 rounded-2xl"
+                            className="p-1"
                             onClick={() => handlePageChange(currentPage + 1)}
                             disabled={currentPage === totalPages}
                         >
