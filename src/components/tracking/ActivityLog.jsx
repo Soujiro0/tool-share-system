@@ -23,7 +23,7 @@ export const ActivityLog = ({ logs, showCheckboxes = false, toggleSelection, sel
             <h2 className="text-lg font-bold mb-4">Activity Log</h2>
 
             {/* Scrollable Container */}
-            <div className="max-h-full overflow-auto space-y-4 p-2 border border-gray-200 rounded-md">
+            <div className="max-h-full overflow-auto space-y-4 p-2 rounded-md">
                 {logs.map((log) => {
                     const iconName = iconsByActionType[log.action_type] || "question-circle";
                     const colorName = colorByUserType[log.role] || "gray";
