@@ -24,7 +24,7 @@ export const InventoryManagement = () => {
 
     const [activityLogs, setActivityLogs] = useState([]);
     const [activityPage, setActivityPage] = useState(1);
-    const [activityLimit] = useState(5);
+    const [activityLimit] = useState(10);
     const [activityTotalPage, setActivityTotalPage] = useState(1);
 
     const [categories, setCategories] = useState([]);
@@ -61,17 +61,18 @@ export const InventoryManagement = () => {
 
     const handleCreateActLog = async (user, actionType, action) => {
         const logData = {
-            user_type: user.role,
             user_id: user.user_id,
+            user_name: user.name,
+            role: user.role,
             action_type: actionType,
             action: action,
         };
+        console.log(logData);
         await ApiService.ActivityLogService.createActivityLog(token, logData);
     };
 
     const handleAddItem = () => {
-        setEditingItem();
-        setModalContent(<ItemForm categories={categories} onSubmit={handleAddOrUpdateItem} />);
+        setModalContent(<ItemForm categories={categories} initialData={null} onSubmit={handleAddOrUpdateItem} />);
         setModalOpen(true);
     };
 
@@ -81,6 +82,7 @@ export const InventoryManagement = () => {
 
     const handleAddOrUpdateItem = async (item) => {
         try {
+            console.log(item);
             if (editingItem && editingItem.id) {
                 console.log("Updating existing item:", item);
                 await ApiService.ItemService.updateItem(token, editingItem.id, item);
@@ -141,7 +143,7 @@ export const InventoryManagement = () => {
             <div className="w-full mx-auto">
                 <Header onAdd={handleAddItem} />
                 <div className="pt-2">
-                    <div className="bg-white p-5 rounded-md shadow-md mb-6">
+                    <div className="bg-white p-5 rounded-md shadow-md mb-2">
                         <Filters categories={categories} />
                         <InventoryTable items={items} onEdit={handleUpdateItem} onDelete={handleDeleteItem} />
                         <Pagination currentPage={itemsPage} totalPages={itemsTotalPages} onPageChange={setItemsPage} />
@@ -150,7 +152,10 @@ export const InventoryManagement = () => {
                         <ActivityLog logs={activityLogs} />
                         <Pagination currentPage={activityPage} totalPages={activityTotalPage} onPageChange={setActivityPage} />
                     </div>
-                    <Modal isOpen={isModalOpen} onClose={() => setModalOpen(false)}>
+                    <Modal isOpen={isModalOpen} onClose={() => {
+                        setModalOpen(false);
+                        setEditingItem(null);
+                    }}>
                         {modalContent}
                     </Modal>
                 </div>

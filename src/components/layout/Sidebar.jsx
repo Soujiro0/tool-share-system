@@ -1,4 +1,3 @@
-// src/components/Sidebar.jsx
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -9,17 +8,28 @@ import Modal from "../ui/Modal";
 library.add(fas);
 
 export const Sidebar = () => {
-    const { logout } = useContext(AuthContext);
+    const { logout, auth } = useContext(AuthContext);
     const navigate = useNavigate();
     const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
-    const menuItems = [
+    const baseMenuItems = [
         { name: "Dashboard", icon: "chart-line", to: "/dashboard" },
         { name: "Inventory", icon: "boxes", to: "/inventory" },
         { name: "Transactions", icon: "sync-alt", to: "/transactions" },
         { name: "Condition Reports", icon: "file-alt", to: "/condition-reports" },
+        { name: "Activity Logs", icon: "book", to: "/activity-logs" },
         { name: "Settings", icon: "cog", to: "/settings" },
     ];
+
+    const menuItems = [...baseMenuItems];
+
+    if (auth.user && auth.user.role === "super_admin") {
+        menuItems.splice(1, 0, {
+            name: "Admin Accounts",
+            icon: "user-tie",
+            to: "/admin-accounts",
+        });
+    }
 
     const openLogoutModal = () => setIsLogoutModalOpen(true);
     const closeLogoutModal = () => setIsLogoutModalOpen(false);
@@ -31,7 +41,7 @@ export const Sidebar = () => {
     };
 
     return (
-        <div className="flex flex-col h-screen w-64 bg-white">
+        <div className="fixed left-0 top-0 h-screen w-64 bg-white shadow-md flex flex-col">
             <div className="p-4">
                 <h1 className="text-xl font-bold mb-4">ToolShare</h1>
                 <ul className="space-y-2">
