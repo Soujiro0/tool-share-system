@@ -30,9 +30,35 @@ export const InventoryManagement = () => {
     const [categories, setCategories] = useState([]);
     const [editingItem, setEditingItem] = useState(null);
 
+    const [selectedCategory, setSelectedCategory] = useState("");
+    const [searchQuery, setSearchQuery] = useState("");
+    const [sortColumn, setSortColumn] = useState("");
+    const [sortOrder, setSortOrder] = useState("");
+
+    const handleCategoryFilter = (category) => {
+        setSelectedCategory(category);
+    };
+
+    const handleSearch = (query) => {
+        setSearchQuery(query);
+    };
+
+    const handleSortColumnChange = (column) => {
+        setSortColumn(column);
+    };
+
+    const handleSortOrderChange = (order) => {
+        setSortOrder(order);
+    };
+
+    const filteredItems = items.filter(item => 
+        selectedCategory === "" || item.category === selectedCategory
+    );
+
     const fetchItems = async () => {
         try {
-            const data = await ApiService.ItemService.getItems(token, itemsLimit, itemsPage);
+            let data;
+            data = await ApiService.ItemService.getItems(token, itemsLimit, itemsPage, selectedCategory, searchQuery, sortColumn, sortOrder);
             setItemsTotalPages(Math.ceil(data.totalItems / itemsLimit));
             setItems(data.items);
         } catch (error) {
@@ -115,7 +141,7 @@ export const InventoryManagement = () => {
     useEffect(() => {
         fetchItems();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [token, itemsPage, itemsLimit]);
+    }, [token, itemsPage, itemsLimit, selectedCategory, searchQuery, sortColumn, sortOrder]);
 
     useEffect(() => {
         fetchActivityLogs();
@@ -124,7 +150,6 @@ export const InventoryManagement = () => {
 
     useEffect(() => {
         fetchCategories();
-        console.log(editingItem);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [token]);
 
@@ -147,8 +172,14 @@ export const InventoryManagement = () => {
                 </div>
                 <div className="p-2">
                     <div className="p-2 rounded-md shadow-md mb-2">
-                        <InventoryFilter categories={categories} />
-                        <InventoryTable items={items} onEdit={handleUpdateItem} onDelete={handleDeleteItem} />
+                        <InventoryFilter 
+                            categories={categories} 
+                            onCategoryChange={handleCategoryFilter} 
+                            onSearch={handleSearch} 
+                            onSortColumnChange={handleSortColumnChange} 
+                            onSortOrderChange={handleSortOrderChange} 
+                        />
+                        <InventoryTable items={filteredItems} onEdit={handleUpdateItem} onDelete={handleDeleteItem} />
                         <Pagination currentPage={itemsPage} totalPages={itemsTotalPages} onPageChange={setItemsPage} />
                     </div>
                     <div className="p-2">

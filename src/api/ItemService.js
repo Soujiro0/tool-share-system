@@ -1,8 +1,18 @@
 import { API_BASE } from './config';
 
-export async function getItems(token, limit = 10, page = 1) {
+export async function getItems(token, limit = 10, page = 1, category, searchQuery = "", sortColumn = "", sortOrder = "") {
+    console.log(category, searchQuery, sortColumn, sortOrder)
     try {
-        const response = await fetch(`${API_BASE}/items.php?limit=${limit}&page=${page}`, {
+        const params = new URLSearchParams({
+            limit: limit.toString(),
+            page: page.toString(),
+        });
+
+        if (category) params.append("category", category);
+        if (searchQuery) params.append("search", encodeURIComponent(searchQuery));
+        if (sortColumn) params.append("sort_by", sortColumn);
+        if (sortOrder) params.append("order", sortOrder.toUpperCase());
+        const response = await fetch(`${API_BASE}/items.php?${ params.toString() }`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

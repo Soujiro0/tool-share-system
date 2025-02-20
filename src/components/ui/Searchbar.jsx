@@ -1,5 +1,6 @@
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import PropTypes from 'prop-types';
 
 export const Searchbar = ({ onSearch }) => {
     const handleSearchChange = (event) => {
@@ -16,6 +17,8 @@ export const Searchbar = ({ onSearch }) => {
     );
 };
 
-Searchbar.propTypes;
+Searchbar.propTypes = {
+    onSearch: PropTypes.func.isRequired,
+};
 
 export default Searchbar;
