@@ -1,9 +1,9 @@
 import { API_BASE } from './config';
 
-export async function getActivityLogs(token, limit = 10, page = 1) {
+export async function getActivityLogs(token, limit = 10, page = 1, userType = "", actionType = "", startDate = "", endDate = "", searchQuery = "") {
     try {
         const response = await fetch(
-            `${API_BASE}/activity_logs.php?limit=${limit}&page=${page}`,
+            `${API_BASE}/activity_logs.php?user_type=${userType}&limit=${limit}&page=${page}&action_type=${actionType}&start_date=${startDate}&end_date=${endDate}&search_query=${searchQuery}`,
             {
                 method: "GET",
                 headers: {

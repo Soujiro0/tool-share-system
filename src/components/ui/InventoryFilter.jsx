@@ -1,13 +1,9 @@
-import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Searchbar from "./Searchbar";
 
 export const Filters = ({ categories }) => {
     return (
         <div className="flex justify-between items-center mb-4">
-            <div className="flex items-center gap-3 w-full">
-                <input type="text" placeholder="Search items..." className="border border-gray-300 rounded-md p-2 w-full max-w-xs" />
-                <FontAwesomeIcon icon={faMagnifyingGlass} />
-            </div>
+            <Searchbar />
             <div className="flex space-x-2">
                 <div className="border border-gray-300 rounded-md flex p-1 pr-2">
                     <select onChange={() => {}} className="p-2" required>

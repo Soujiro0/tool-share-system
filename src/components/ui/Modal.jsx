@@ -19,7 +19,7 @@ export const Modal = ({ isOpen, onClose, children, buttonLayout, extraButtons })
                                     {button.label}
                                 </button>
                             ))}
-                        <button onClick={onClose} className="bg-red-600 text-white px-4 py-2 rounded-md w-full">
+                        <button onClick={onClose} className="bg-gray-300 text-grey px-4 py-2 rounded-md w-full">
                             Close
                         </button>
                     </div>

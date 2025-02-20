@@ -1,7 +1,9 @@
+import Header from "../components/layout/Header";
+
 export const Settings = () => {
     return(
         <>
-            <h1>Settings</h1>
+            <Header headerTitle="Settings" />
         </>
     );
 };

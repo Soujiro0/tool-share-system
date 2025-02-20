@@ -2,9 +2,9 @@ import { useContext, useEffect, useState } from "react";
 import { ApiService } from "../api/ApiService";
 import ItemForm from "../components/forms/ItemForm";
 import Header from "../components/layout/Header";
-import InventoryTable from "../components/tables/InvententoryTable";
+import InventoryTable from "../components/tables/InventoryTable";
 import ActivityLog from "../components/tracking/ActivityLog";
-import Filters from "../components/ui/Filters";
+import InventoryFilter from "../components/ui/InventoryFilter";
 import Modal from "../components/ui/Modal";
 import Pagination from "../components/ui/Pagination";
 import { AuthContext } from "../context/AuthContext";
@@ -42,7 +42,7 @@ export const InventoryManagement = () => {
 
     const fetchActivityLogs = async () => {
         try {
-            const data = await ApiService.ActivityLogService.getActivityLogs(token, activityLimit, activityPage);
+            const data = await ApiService.ActivityLogService.getActivityLogs(token, activityLimit, activityPage, "", "");
             setActivityTotalPage(Math.ceil(data.totalLogs / activityLimit));
             setActivityLogs(data.logs);
         } catch (error) {
@@ -84,11 +84,9 @@ export const InventoryManagement = () => {
         try {
             console.log(item);
             if (editingItem && editingItem.id) {
-                console.log("Updating existing item:", item);
                 await ApiService.ItemService.updateItem(token, editingItem.id, item);
                 handleCreateActLog(user, "Update", `Updated Item: ${item.name}`);
             } else {
-                console.log("Adding new item:", item);
                 await ApiService.ItemService.createItem(token, item);
                 handleCreateActLog(user, "Create", `Added new Item: ${item.name} to Inventory`);
             }
@@ -141,21 +139,30 @@ export const InventoryManagement = () => {
     return (
         <>
             <div className="w-full mx-auto">
-                <Header onAdd={handleAddItem} />
-                <div className="pt-2">
-                    <div className="bg-white p-5 rounded-md shadow-md mb-2">
-                        <Filters categories={categories} />
+                <Header headerTitle="Inventory Management" />
+                <div className="my-5 flex justify-end">
+                    <button onClick={handleAddItem} className="bg-blue-600 text-white px-4 py-2 rounded-md">
+                        + Add New Item
+                    </button>
+                </div>
+                <div className="p-2">
+                    <div className="p-2 rounded-md shadow-md mb-2">
+                        <InventoryFilter categories={categories} />
                         <InventoryTable items={items} onEdit={handleUpdateItem} onDelete={handleDeleteItem} />
                         <Pagination currentPage={itemsPage} totalPages={itemsTotalPages} onPageChange={setItemsPage} />
                     </div>
-                    <div className="bg-white p-5 rounded-md shadow-md">
+                    <div className="p-2">
+                        <h2 className="text-2xl font-bold mt-5 mb-10">Activity Logs</h2>
                         <ActivityLog logs={activityLogs} />
                         <Pagination currentPage={activityPage} totalPages={activityTotalPage} onPageChange={setActivityPage} />
                     </div>
-                    <Modal isOpen={isModalOpen} onClose={() => {
-                        setModalOpen(false);
-                        setEditingItem(null);
-                    }}>
+                    <Modal
+                        isOpen={isModalOpen}
+                        onClose={() => {
+                            setModalOpen(false);
+                            setEditingItem(null);
+                        }}
+                    >
                         {modalContent}
                     </Modal>
                 </div>
