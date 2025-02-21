@@ -73,10 +73,12 @@ export const ActivityLogs = () => {
 
     const handleFilterByUserType = (selectedUserType) => {
         setUserType(selectedUserType);
+        setActivityPage(1); // Reset page to 1
     };
 
     const handleFilterByActionType = (selectedActionType) => {
         setActionType(selectedActionType);
+        setActivityPage(1); // Reset page to 1
     };
 
     const refreshActivityLogs = () => {
@@ -103,8 +105,8 @@ export const ActivityLogs = () => {
                         onDeleteSelected={openDeleteModal}
                         onFilterByUserType={handleFilterByUserType}
                         onFilterByActionType={handleFilterByActionType}
-                        onFilterByStartDate={setStartDate}
-                        onFilterByEndDate={setEndDate}
+                        onFilterByStartDate={(date) => { setStartDate(date); setActivityPage(1); }}
+                        onFilterByEndDate={(date) => { setEndDate(date); setActivityPage(1); }}
                         onSearch={setSearchQuery}
                         onRefresh={refreshActivityLogs}
                     />

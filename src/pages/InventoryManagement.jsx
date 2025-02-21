@@ -41,14 +41,17 @@ export const InventoryManagement = () => {
 
     const handleSearch = (query) => {
         setSearchQuery(query);
+        setItemsPage(1);
     };
 
     const handleSortColumnChange = (column) => {
         setSortColumn(column);
+        setItemsPage(1);
     };
 
     const handleSortOrderChange = (order) => {
         setSortOrder(order);
+        setItemsPage(1);
     };
 
     const filteredItems = items.filter(item => 
