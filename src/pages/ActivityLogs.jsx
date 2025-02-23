@@ -1,126 +1,145 @@
 import { useContext, useEffect, useState } from "react";
 import ApiService from "../api/ApiService";
+import ActivityFilter from "../components/filters/ActivityFilter";
 import Header from "../components/layout/Header";
-import ActivityLog from "../components/tracking/ActivityLog";
-import Modal from "../components/ui/Modal";
+import ActivityLogTable from "../components/tables/ActivityLogTable";
 import Pagination from "../components/ui/Pagination";
+import Searchbar from "../components/ui/Searchbar";
 import { AuthContext } from "../context/AuthContext";
 
 export const ActivityLogs = () => {
     const { auth } = useContext(AuthContext);
-    const token = auth.token;
+    const { token } = auth;
 
-    const [activityLogs, setActivityLogs] = useState([]);
-    const [activityPage, setActivityPage] = useState(1);
-    const [activityLimit] = useState(10);
-    const [activityTotalPage, setActivityTotalPage] = useState(1);
-
+    const [logs, setLogs] = useState([]);
     const [selectedLogs, setSelectedLogs] = useState([]);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [userType, setUserType] = useState("");
-    const [actionType, setActionType] = useState("");
-    const [startDate, setStartDate] = useState("");
-    const [endDate, setEndDate] = useState("");
-    const [searchQuery, setSearchQuery] = useState("");
 
-    const fetchActivityLogs = async () => {
+    const [currentPage, setCurrentPage] = useState(1);
+    const [logTotalPages, setLogTotalPages] = useState(1);
+
+    const [filters, setFilters] = useState({
+        userType: "",
+        actionType: "",
+        startDate: "",
+        endDate: "",
+        searchQuery: "",
+    });
+
+    const handleSearch = (searchQuery) => {
+        resetPage();
+        setFilters((prevFilters) => ({ ...prevFilters, searchQuery }));
+    };
+
+    const handleUserTypeFilterChange = (userType) => {
+        resetPage();
+        setFilters((prevFilters) => ({ ...prevFilters, userType }));
+    };
+
+    const handleActionTypeFilterChange = (actionType) => {
+        resetPage();
+        setFilters((prevFilters) => ({ ...prevFilters, actionType }));
+    };
+
+    const handleStartDateChange = (startDate) => {
+        resetPage();
+        setFilters((prevFilters) => ({ ...prevFilters, startDate }));
+    };
+
+    const handleEndDateChange = (endDate) => {
+        resetPage();
+        setFilters((prevFilters) => ({ ...prevFilters, endDate }));
+    };
+
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+    };
+
+    const resetPage = () => {
+        setCurrentPage(1);
+    };
+
+    const fetchLogs = async () => {
         try {
-            const data = await ApiService.ActivityLogService.getActivityLogs(token, activityLimit, activityPage, userType, actionType, startDate, endDate, searchQuery);
-            setActivityTotalPage(Math.ceil(data.totalLogs / activityLimit));
-            setActivityLogs(data.logs);
+            const data = await ApiService.ActivityLogService.getActivityLogs(
+                token,
+                10,
+                currentPage,
+                filters.userType,
+                filters.actionType,
+                filters.startDate,
+                filters.endDate,
+                filters.searchQuery
+            );
+            console.log(data.totalLogs)
+            setLogTotalPages(Math.ceil(data.totalLogs / 10));
+            setLogs(data.logs);
         } catch (error) {
             console.error("Error fetching items:", error);
         }
     };
 
-    const handleDeleteSelected = async () => {
-        const selectedItems = activityLogs.filter((log) => selectedLogs.includes(log.id));
-        console.log("Selected items to delete:", selectedItems);
-
-        try {
-            await Promise.all(selectedItems.map((item) => ApiService.ActivityLogService.deleteActivityLog(token, item.id)));
-            setSelectedLogs([]);
-            fetchActivityLogs();
-        } catch (error) {
-            console.error("Error deleting selected items:", error);
-        }
-    };
-
-    const toggleSelection = (id) => {
-        setSelectedLogs((prev) => (prev.includes(id) ? prev.filter((logId) => logId !== id) : [...prev, id]));
-    };
-
-    const handleSelectAll = (isChecked) => {
-        if (isChecked) {
-            setSelectedLogs(activityLogs.map((log) => log.id));
+    const handleSelectAll = (isSelected) => {
+        if (isSelected) {
+            setSelectedLogs(logs.map(log => log.id));
         } else {
             setSelectedLogs([]);
         }
     };
 
-    const openDeleteModal = () => {
-        setIsModalOpen(true);
+    const handleToggleSelection = (logId) => {
+        setSelectedLogs((prevSelectedLogs) =>
+            prevSelectedLogs.includes(logId)
+                ? prevSelectedLogs.filter(id => id !== logId)
+                : [...prevSelectedLogs, logId]
+        );
     };
 
-    const closeDeleteModal = () => {
-        setIsModalOpen(false);
-    };
-
-    const confirmDelete = () => {
-        handleDeleteSelected();
-        closeDeleteModal();
-    };
-
-    const handleFilterByUserType = (selectedUserType) => {
-        setUserType(selectedUserType);
-        setActivityPage(1); // Reset page to 1
-    };
-
-    const handleFilterByActionType = (selectedActionType) => {
-        setActionType(selectedActionType);
-        setActivityPage(1); // Reset page to 1
-    };
-
-    const refreshActivityLogs = () => {
-        fetchActivityLogs();
+    const handleDeleteSelected = async () => {
+        try {
+            for (const logId of selectedLogs) {
+                await ApiService.ActivityLogService.deleteActivityLog(token, logId);
+            }
+            setSelectedLogs([]);
+            fetchLogs();
+        } catch (error) {
+            console.error("Error deleting logs:", error);
+        }
     };
 
     useEffect(() => {
-        fetchActivityLogs();
+        fetchLogs();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [token, activityPage, activityLimit, userType, actionType, startDate, endDate, searchQuery]);
+    }, [token, currentPage, filters]);
 
     return (
         <>
-            <div className="w-full mx-auto">
-                <Header headerTitle="Activity Logs" />
-
-                <div className="p-2 rounded-md bg-white my-4">
-                    <ActivityLog
-                        logs={activityLogs}
-                        showOptions={true}
-                        toggleSelection={toggleSelection}
-                        selectedLogs={selectedLogs}
-                        onSelectAll={handleSelectAll}
-                        onDeleteSelected={openDeleteModal}
-                        onFilterByUserType={handleFilterByUserType}
-                        onFilterByActionType={handleFilterByActionType}
-                        onFilterByStartDate={(date) => { setStartDate(date); setActivityPage(1); }}
-                        onFilterByEndDate={(date) => { setEndDate(date); setActivityPage(1); }}
-                        onSearch={setSearchQuery}
-                        onRefresh={refreshActivityLogs}
-                    />
-                    <Pagination currentPage={activityPage} totalPages={activityTotalPage} onPageChange={setActivityPage} />
-                </div>
+            <Header headerTitle={"Activity Logs"} />
+            <div className="flex items-center my-5">
+                <Searchbar onSearch={handleSearch} placeholder={"Search Logs..."} />
+                <ActivityFilter
+                    onFilterByUserType={handleUserTypeFilterChange}
+                    onFilterByActionType={handleActionTypeFilterChange}
+                    onFilterByStartDate={handleStartDateChange}
+                    onFilterByEndDate={handleEndDateChange}
+                />
             </div>
-            <Modal isOpen={isModalOpen} onClose={closeDeleteModal}>
-                <p>Are you sure you want to delete the selected logs?</p>
-                <div className="mt-4 w-full">
-                    <button onClick={confirmDelete} className="bg-red-600 text-white px-4 py-2 rounded-md w-full">
-                        Delete
-                    </button>
-                </div>
-            </Modal>
+            <div>
+                <ActivityLogTable
+                    logs={logs}
+                    showOptions={true}
+                    toggleSelection={handleToggleSelection}
+                    selectedLogs={selectedLogs}
+                    onSelectAll={handleSelectAll}
+                    onDeleteSelected={handleDeleteSelected}
+                    onFilterByUserType={() => {}}
+                    onFilterByActionType={() => {}}
+                    onFilterByStartDate={() => {}}
+                    onFilterByEndDate={() => {}}
+                    onSearch={() => {}}
+                    onRefresh={() => {}}
+                />
+                <Pagination currentPage={currentPage} totalPages={logTotalPages} onPageChange={handlePageChange} />
+            </div>
         </>
     );
 };

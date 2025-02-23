@@ -3,12 +3,11 @@ import Navbar from "../components/layout/Navbar";
 import Sidebar from "../components/layout/Sidebar";
 import ActivityLogs from "../pages/ActivityLogs";
 import Admin from "../pages/Admin";
-import AdminAccounts from "../pages/AdminAccounts";
-import BorrowingForm from "../pages/BorrowingForm";
 import ConditionReport from "../pages/ConditionReports";
 import Dashboard from "../pages/Dashboard";
-import InventoryManagement from "../pages/InventoryManagement";
+import Inventory from "../pages/Inventory";
 import Landing from "../pages/Landing";
+import ManageAccounts from "../pages/ManageAccounts";
 import Settings from "../pages/Settings";
 import Transactions from "../pages/Transactions";
 import ProtectedRoute from "./ProtectedRoute";
@@ -42,7 +41,7 @@ export const AppRoute = () => {
                 }
             >
                 <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/inventory" element={<InventoryManagement />} />
+                <Route path="/inventory" element={<Inventory />} />
                 <Route path="/transactions" element={<Transactions />} />
                 <Route path="/condition-reports" element={<ConditionReport />} />
                 <Route path="/activity-logs" element={<ActivityLogs />} />
@@ -56,12 +55,11 @@ export const AppRoute = () => {
                     </ProtectedRoute>
                 }
             >
-                <Route path="/admin-accounts" element={<AdminAccounts />} />
+                <Route path="/admin-accounts" element={<ManageAccounts />} />
             </Route>
             <Route element={<WithNavbar />}>
                 <Route path="/" element={<Landing />} />
                 <Route path="/admin" element={<Admin />} />
-                <Route path="/borrower-form" element={<BorrowingForm />} />
             </Route>
         </Routes>
     );

@@ -4,7 +4,7 @@ export const Transactions = () => {
     return(
         <>
             <div>
-                <Header headerTitle="Transactions" />
+                <Header headerTitle={"Transactions"} />
             </div>
         </>
     );
