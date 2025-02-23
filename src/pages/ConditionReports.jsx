@@ -1,7 +1,9 @@
+import Header from "../components/layout/Header";
+
 export const ConditionReports = () => {
     return(
         <>
-            <h1>Condition Reports</h1>
+            <Header headerTitle={"Condtion Reports"} />
         </>
     );
 };

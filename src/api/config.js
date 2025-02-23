@@ -1,2 +1,3 @@
 const SERVER_IP = 'localhost';
-export const API_BASE = `http://${SERVER_IP}/test-server/api/routes`;
+const ROOT_FOLDER = 'test-server';
+export const API_BASE = `http://${SERVER_IP}/${ROOT_FOLDER}/api/routes`;

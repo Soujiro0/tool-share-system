@@ -3,7 +3,6 @@ import PropTypes from "prop-types";
 export const Modal = ({ isOpen, onClose, children, buttonLayout, extraButtons }) => {
     if (!isOpen) return null;
 
-    // Determine container classes based on layout: horizontal (side by side) or vertical (stacked)
     const buttonContainerClass = buttonLayout === "vertical" ? "mt-4 flex flex-col gap-4" : "mt-4 flex flex-row gap-4 justify-end";
 
     return (
@@ -19,7 +18,7 @@ export const Modal = ({ isOpen, onClose, children, buttonLayout, extraButtons })
                                     {button.label}
                                 </button>
                             ))}
-                        <button onClick={onClose} className="bg-red-600 text-white px-4 py-2 rounded-md w-full">
+                        <button onClick={onClose} className="bg-gray-300 text-grey px-4 py-2 rounded-md w-full">
                             Close
                         </button>
                     </div>
@@ -32,7 +31,7 @@ export const Modal = ({ isOpen, onClose, children, buttonLayout, extraButtons })
 Modal.propTypes = {
     isOpen: PropTypes.bool.isRequired,
     onClose: PropTypes.func.isRequired,
-    children: PropTypes.any.isRequired,
+    children: PropTypes.node.isRequired,
     buttonLayout: PropTypes.oneOf(["horizontal", "vertical"]),
     extraButtons: PropTypes.arrayOf(
         PropTypes.shape({

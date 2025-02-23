@@ -1,5 +1,3 @@
-// src/api/ApiService.js
-
 import * as ActivityLogService from './ActivityLogService';
 import * as BorrowRequestService from './BorrowRequestService';
 import * as CategoryService from './CategoryService';

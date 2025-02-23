@@ -1,8 +1,7 @@
-export const Header = ({ onAdd }) => {
+export const Header = ({ headerTitle }) => {
     return (
-        <div className="flex justify-between items-center p-5 shadow-md bg-white">
-            <h6 className="text-3xl font-bold">Inventory Management</h6>
-            <button onClick={onAdd} className="bg-blue-600 text-white px-4 py-2 rounded-md">+ Add New Item</button>
+        <div className="flex justify-between items-center rounded-2xl p-5 shadow-md bg-gray-100">
+            <h6 className="text-3xl font-bold">{headerTitle}</h6>
         </div>
     );
 };

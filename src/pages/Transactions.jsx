@@ -1,8 +1,13 @@
+import Header from "../components/layout/Header";
+
 export const Transactions = () => {
     return(
         <>
-            <h1>Transactions</h1>
+            <div>
+                <Header headerTitle={"Transactions"} />
+            </div>
         </>
     );
 };
+
 export default Transactions;

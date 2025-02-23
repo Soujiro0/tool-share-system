@@ -1,10 +1,26 @@
+import PropTypes from 'prop-types';
+
 export const Pagination = ({ currentPage, totalPages, onPageChange }) => {
     if (totalPages <= 1) return null;
 
-    const pageNumbers = [];
-    for (let i = 1; i <= totalPages; i++) {
-        pageNumbers.push(i);
-    }
+    const getPageNumbers = () => {
+        const maxButtons = 10;
+        const halfMaxButtons = Math.floor(maxButtons / 2);
+        let startPage = Math.max(1, currentPage - halfMaxButtons);
+        let endPage = Math.min(totalPages, currentPage + halfMaxButtons);
+
+        if (currentPage <= halfMaxButtons) {
+            endPage = Math.min(totalPages, maxButtons);
+        } else if (currentPage + halfMaxButtons >= totalPages) {
+            startPage = Math.max(1, totalPages - maxButtons + 1);
+        }
+
+        const pageNumbers = [];
+        for (let i = startPage; i <= endPage; i++) {
+            pageNumbers.push(i);
+        }
+        return pageNumbers;
+    };
 
     const handlePageChange = (page) => {
         if (page >= 1 && page <= totalPages) {
@@ -25,7 +41,7 @@ export const Pagination = ({ currentPage, totalPages, onPageChange }) => {
                             Previous
                         </button>
                     </li>
-                    {pageNumbers.map((number) => (
+                    {getPageNumbers().map((number) => (
                         <li key={number}>
                             <button
                                 onClick={() => handlePageChange(number)}
@@ -33,7 +49,7 @@ export const Pagination = ({ currentPage, totalPages, onPageChange }) => {
                                     fontWeight: currentPage === number ? "bold" : "normal",
                                     backgroundColor: currentPage === number ? "#ccc" : "transparent",
                                 }}
-                                className="p-1 rounded-2xl"
+                                className="p-1"
                             >
                                 {number}
                             </button>
@@ -54,6 +70,10 @@ export const Pagination = ({ currentPage, totalPages, onPageChange }) => {
     );
 };
 
-Pagination.propTypes;
+Pagination.propTypes = {
+    currentPage: PropTypes.number.isRequired,
+    totalPages: PropTypes.number.isRequired,
+    onPageChange: PropTypes.func.isRequired,
+};
 
 export default Pagination;
