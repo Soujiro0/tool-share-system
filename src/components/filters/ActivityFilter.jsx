@@ -66,15 +66,15 @@ export const ActivityFilter = ({ onFilterByUserType, onFilterByActionType, onFil
                             },
                             {
                                 name: "Super Admin",
-                                value: "super_admin",
+                                value: "1",
                             },
                             {
                                 name: "Admin",
-                                value: "admin",
+                                value: "2",
                             },
                             {
                                 name: "Faculty",
-                                value: "faculty",
+                                value: "3",
                             },
                         ]}
                         onChange={handleUserTypeChange}

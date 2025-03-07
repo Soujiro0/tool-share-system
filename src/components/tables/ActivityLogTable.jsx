@@ -7,17 +7,38 @@ library.add(fas);
 export const ActivityLogTable = ({ logs, showOptions = false, toggleSelection, selectedLogs, onSelectAll, onDeleteSelected, onRefresh }) => {
     
     const iconsByActionType = {
-        Create: "plus",
-        Approve: "check",
-        Update: "edit",
-        Process: "sync-alt",
-        Delete: "trash-alt",
+        CREATE: "plus",
+        UPDATE: "edit",
+        DELETE: "trash-alt",
+        APPROVED: "check",
+        REJECTED: "reject",
+        REQUEST: "hand",
+        CANCELLED: "",
+        BORROWED: "",
+        RETURNED: "",
+        LOGIN: "right-to-bracket"
     };
 
-    const colorByUserType = {
-        admin: "green",
-        super_admin: "blue",
-    };
+    // const colorByUserType = {
+    //     1: "blue",
+    //     2: "light",
+    //     3: "red",
+    // };
+
+    const roles = [
+        {
+            role_id: 1,
+            role_name: "Super Admin"
+        },
+        {
+            role_id: 2,
+            role_name: "Admin"
+        },
+        {
+            role_id: 3,
+            role_name: "Faculty"
+        },
+    ];
 
     return (
         <>
@@ -49,7 +70,7 @@ export const ActivityLogTable = ({ logs, showOptions = false, toggleSelection, s
                 {/* Table */}
                 <div className="overflow-auto rounded-md">
                     <table className="w-full border-collapse">
-                        <thead className="bg-gray-200 text-center">
+                        <thead className="bg-gray-200 text-left">
                             <tr>
                                 {showOptions && (
                                     <th className="p-2"></th>
@@ -62,35 +83,36 @@ export const ActivityLogTable = ({ logs, showOptions = false, toggleSelection, s
                                 <th className="p-2">Timestamp</th>
                             </tr>
                         </thead>
-                        <tbody className="text-center">
+                        <tbody className="text-left">
                             {logs.length > 0 ? (
                                 logs.map((log) => {
                                     const iconName = iconsByActionType[log.action_type] || "question-circle";
-                                    const colorName = colorByUserType[log.role] || "gray";
+                                    // const colorName = colorByUserType[log.role_id] || "gray";
+                                    const colorName = "gray";
 
                                     return (
-                                        <tr key={log.id} className="border-b hover:bg-gray-100">
+                                        <tr key={log.log_id} className="border-b hover:bg-gray-100">
                                             {showOptions && (
-                                                <td className="p-2">
+                                                <td className="p-2 text-center">
                                                     <input
                                                         type="checkbox"
-                                                        checked={selectedLogs.includes(log.id)}
-                                                        onChange={() => toggleSelection(log.id)}
+                                                        checked={selectedLogs.includes(log.log_id)}
+                                                        onChange={() => toggleSelection(log.log_id)}
                                                         className="h-5 w-5"
                                                     />
                                                 </td>
                                             )}
-                                            <td>{log.id}</td>
-                                            <td className="p-2 justify-center flex items-center gap-2">
+                                            <td className="p-2">{log.log_id}</td>
+                                            <td className="p-2 justify-start flex items-center gap-2">
                                                 <p>{log.action_type}</p>
                                                 <FontAwesomeIcon icon={["fas", iconName]} className={`text-${colorName}-600`} />
                                             </td>
                                             <td className="p-2">
-                                                <p>{log.action}</p>
+                                                <p>{log.action_description}</p>
                                             </td>
                                             <td className="p-2">{log.user_name}</td>
                                             <td className={`p-2 text-${colorName}-600 font-bold`}>
-                                                {log.role === "super_admin" ? "Super Admin" : "Admin"}
+                                                {roles.find(role => role.role_id === log.role_id)?.role_name || "Unknown"}
                                             </td>
                                             <td className="p-2 text-gray-500">{log.action_timestamp}</td>
                                         </tr>

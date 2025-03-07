@@ -14,23 +14,35 @@ export const Sidebar = () => {
 
     const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
-    const baseMenuItems = [
-        { name: "Dashboard", icon: "chart-line", to: "/dashboard" },
+    const baseAdminMenu = [
+        { name: "Dashboard", icon: "chart-line", to: "/admin-dashboard" },
         { name: "Inventory", icon: "boxes", to: "/inventory" },
         { name: "Transactions", icon: "sync-alt", to: "/transactions" },
-        { name: "Condition Reports", icon: "file-alt", to: "/condition-reports" },
         { name: "Activity Logs", icon: "book", to: "/activity-logs" },
         { name: "Settings", icon: "cog", to: "/settings" },
     ];
 
-    const menuItems = [...baseMenuItems];
+    const facultyMenu = [
+        { name: "Dashboard", icon: "chart-line", to: "/faculty-dashboard" },
+        { name: "Approval List", icon: "check-circle", to: "/approval-list" },
+        { name: "History", icon: "history", to: "/history" },
+        { name: "Borrow Item", icon: "hand", to: "/borrow-item" },
+        { name: "Settings", icon: "cog", to: "/settings" },
+    ];
 
-    if (auth.user && auth.user.role === "super_admin") {
+    let menuItems = [];
+
+    if (auth.user?.role === "Super Admin") {
+        menuItems = [...baseAdminMenu];
         menuItems.splice(1, 0, {
             name: "Admin Accounts",
             icon: "user-tie",
             to: "/admin-accounts",
         });
+    } else if (auth.user?.role === "Admin") {
+        menuItems = baseAdminMenu;
+    } else if (auth.user?.role === "Faculty") {
+        menuItems = facultyMenu;
     }
 
     const openLogoutModal = () => setIsLogoutModalOpen(true);

@@ -18,7 +18,7 @@ export async function getActivityLogs(token, limit, page, userType, actionType, 
         const params = new URLSearchParams({
             limit: limit.toString(),
             page: page.toString(),
-            user_type: userType,
+            role_id: userType,
         });
 
         if (actionType) params.append("action_type", actionType);

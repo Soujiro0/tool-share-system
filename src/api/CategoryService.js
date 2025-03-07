@@ -21,7 +21,9 @@ export async function getCategories(token) {
             const errorData = await response.json();
             throw new Error(errorData.message || 'Error fetching categories');
         }
-        return await response.json();
+        const data = await response.json();
+        console.log(data);
+        return data;
     } catch (error) {
         console.error('Get Categories API error:', error);
         throw error;

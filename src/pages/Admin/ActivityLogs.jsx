@@ -1,11 +1,11 @@
 import { useContext, useEffect, useState } from "react";
-import ApiService from "../api/ApiService";
-import ActivityFilter from "../components/filters/ActivityFilter";
-import Header from "../components/layout/Header";
-import ActivityLogTable from "../components/tables/ActivityLogTable";
-import Pagination from "../components/ui/Pagination";
-import Searchbar from "../components/ui/Searchbar";
-import { AuthContext } from "../context/AuthContext";
+import ApiService from "../../api/ApiService";
+import ActivityFilter from "../../components/filters/ActivityFilter";
+import Header from "../../components/layout/Header";
+import ActivityLogTable from "../../components/tables/ActivityLogTable";
+import Pagination from "../../components/ui/Pagination";
+import Searchbar from "../../components/ui/Searchbar";
+import { AuthContext } from "../../context/AuthContext";
 
 export const ActivityLogs = () => {
     const { auth } = useContext(AuthContext);
@@ -80,7 +80,7 @@ export const ActivityLogs = () => {
 
     const handleSelectAll = (isSelected) => {
         if (isSelected) {
-            setSelectedLogs(logs.map(log => log.id));
+            setSelectedLogs(logs.map(log => log.log_id));
         } else {
             setSelectedLogs([]);
         }
