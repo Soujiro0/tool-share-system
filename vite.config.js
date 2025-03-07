@@ -11,4 +11,8 @@ export default defineConfig({
   css: {
     postcss: "/postcss.config.js", // Ensure PostCSS is referenced
   },
+  base: '/dist/',
+  build: {
+    minify: false,  // Disable minification
+  }
 })

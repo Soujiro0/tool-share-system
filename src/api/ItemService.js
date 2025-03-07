@@ -20,7 +20,7 @@ export async function getItems(token, limit, page, category, searchQuery, sortCo
             page: page.toString(),
         });
 
-        if (category) params.append("category", category);
+        if (category) params.append("category_id", category);
         if (searchQuery) params.append("search", encodeURIComponent(searchQuery));
         if (sortColumn) params.append("sort_by", sortColumn);
         if (sortOrder) params.append("order", sortOrder.toUpperCase());

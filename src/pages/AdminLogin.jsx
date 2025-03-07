@@ -4,7 +4,7 @@ import { ApiService } from "../api/ApiService";
 import LoginForm from "../components/forms/LoginForm";
 import { AuthContext } from "../context/AuthContext";
 
-export const Admin = () => {
+export const AdminLogin = () => {
 
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -15,7 +15,7 @@ export const Admin = () => {
         try {
             const data = await ApiService.LoginService.loginApi(username, password);
             login(data.token);
-            navigate("/dashboard");
+            navigate("/admin-dashboard");
         } catch (error) {
             alert(error.message);
         }
@@ -32,4 +32,4 @@ export const Admin = () => {
     );
 };
 
-export default Admin;
+export default AdminLogin;

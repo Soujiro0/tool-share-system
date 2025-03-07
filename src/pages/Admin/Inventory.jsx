@@ -2,16 +2,16 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useContext, useEffect, useState } from "react";
-import ApiService from "../api/ApiService";
-import DeleteItemAlert from "../components/alerts/DeleteItemAlert";
-import InventoryFilter from "../components/filters/InventoryFilter";
-import ItemForm from "../components/forms/ItemForm";
-import Header from "../components/layout/Header";
-import ActivityLogTable from "../components/tables/ActivityLogTable";
-import InventoryTable from "../components/tables/InventoryTable";
-import Modal from "../components/ui/Modal";
-import Pagination from "../components/ui/Pagination";
-import { AuthContext } from "../context/AuthContext";
+import ApiService from "../../api/ApiService";
+import DeleteItemAlert from "../../components/alerts/DeleteItemAlert";
+import InventoryFilter from "../../components/filters/InventoryFilter";
+import ItemForm from "../../components/forms/ItemForm";
+import Header from "../../components/layout/Header";
+import ActivityLogTable from "../../components/tables/ActivityLogTable";
+import InventoryTable from "../../components/tables/InventoryTable";
+import Modal from "../../components/ui/Modal";
+import Pagination from "../../components/ui/Pagination";
+import { AuthContext } from "../../context/AuthContext";
 
 library.add(faPlus);
 
@@ -151,7 +151,7 @@ export const Inventory = () => {
     const fetchCategories = async () => {
         try {
             const data = await ApiService.CategoryService.getCategories(token);
-            setCategories(data);
+            setCategories(data.categories);
         } catch (error) {
             console.error("Error fetching categories:", error);
         }
@@ -208,7 +208,7 @@ export const Inventory = () => {
                 </button>
             </div>
             <div className="bg-gray-200 mt-5 p-2 rounded-2xl">
-                <InventoryTable items={items} onEditItem={handleUpdateItem} onDeleteItem={handleDeleteItem} />
+                <InventoryTable items={items} categories={categories} onEditItem={handleUpdateItem} onDeleteItem={handleDeleteItem} />
                 <br />
                 <Pagination currentPage={currentPage} totalPages={itemsTotalPages} onPageChange={handlePageChange} />
             </div>

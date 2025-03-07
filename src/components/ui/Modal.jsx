@@ -9,7 +9,7 @@ export const Modal = ({ isOpen, onClose, children, buttonLayout, extraButtons })
         <>
             <div className="fixed inset-0 bg-black opacity-50"></div>
             <div className="fixed inset-0 flex justify-center items-center">
-                <div className="bg-white p-6 rounded-md shadow-md w-96">
+                <div className="bg-white p-6 rounded-md shadow-md w-full md:w-1/2 lg:w-1/3">
                     {children}
                     <div className={buttonContainerClass}>
                         {extraButtons &&

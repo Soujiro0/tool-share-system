@@ -7,15 +7,15 @@ export const InventoryFilter = ({ categories, onSearch, onCategoryChange, onSort
     const sortByOptions = [
         {
             name: "Id",
-            value: "id",
+            value: "item_id",
         },
         {
             name: "Name",
-            value: "name",
+            value: "item_name",
         },
         {
             name: "Category",
-            value: "category",
+            value: "category_id",
         },
         {
             name: "Quantity",
@@ -23,11 +23,11 @@ export const InventoryFilter = ({ categories, onSearch, onCategoryChange, onSort
         },
         {
             name: "Date Added",
-            value: "created_at",
+            value: "date_created",
         },
         {
             name: "Last Update",
-            value: "updated_at",
+            value: "last_updated",
         },
     ];
 
@@ -70,8 +70,8 @@ export const InventoryFilter = ({ categories, onSearch, onCategoryChange, onSort
                                     value: "",
                                 },
                                 ...categories.map((category) => ({
-                                    name: category.name,
-                                    value: category.name,
+                                    name: category.category_name,
+                                    value: category.category_id,
                                 })),
                             ]}
                             onChange={handleCategoryChange}
