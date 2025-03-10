@@ -57,7 +57,7 @@ const Inventory = () => {
             fetchItems();
         }
 
-        toast.success("Item Added to Inventory", {
+        toast.success("CREATED new item to Inventory", {
             description: `${newItem.name} has been added to the inventory.`,
         });
     };
@@ -75,7 +75,7 @@ const Inventory = () => {
             fetchItems();
         }
 
-        toast.success("Item Updated Successfully", {
+        toast.success("UPDATED item successfully", {
             description: `${updatedItem.name} has been updated.`,
         });
     };
@@ -92,7 +92,7 @@ const Inventory = () => {
             fetchItems();
         }
 
-        toast.success("Item Deleted to Inventory", {
+        toast.success("DELETED item to Inventory", {
             description: `${selectedItem.name} has been deleted to the inventory.`,
         });
     };

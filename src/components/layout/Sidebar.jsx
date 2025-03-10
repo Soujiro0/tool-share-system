@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useContext, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
-import Modal from "../ui/custom/Modal";
+import LogoutDialog from "../dialogs/LogoutDialog";
 library.add(fas);
 
 const Sidebar = () => {
@@ -81,20 +81,7 @@ const Sidebar = () => {
                         Logout
                     </button>
                 </div>
-                <Modal
-                    isOpen={isLogoutModalOpen}
-                    onClose={closeLogoutModal}
-                    buttonLayout="horizontal"
-                    extraButtons={[
-                        {
-                            label: "Confirm Logout",
-                            onClick: confirmLogout,
-                            className: "bg-blue-600 text-white px-4 py-2 rounded-md w-full",
-                        },
-                    ]}
-                >
-                    <p className="text-2xl text-center font-bold mb-5 p-5">Are you sure you want to Log out?</p>
-                </Modal>
+                <LogoutDialog isOpen={isLogoutModalOpen} onClose={closeLogoutModal} onConfirm={confirmLogout}/>
             </div>
         </>
     );

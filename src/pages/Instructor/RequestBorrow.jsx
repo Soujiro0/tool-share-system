@@ -5,11 +5,13 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Toaster } from "@/components/ui/sonner";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
 import { AuthContext } from "@/context/AuthContext";
 import { Plus } from "lucide-react";
 import { useContext, useRef, useState } from "react";
+import { toast } from "sonner";
 import Header from "../../components/layout/Header";
 
 const RequestBorrow = () => {
@@ -92,7 +94,9 @@ const RequestBorrow = () => {
                 await ApiService.BorrowItemService.createItemRequest(requestItemData);
             }
 
-            alert("Borrow request submitted successfully!");
+            toast.success("CREATED borrow request successfully", {
+                description: `Your Request ID: ${requestId}`,
+            });
             handleReset(); // Clear form after successful submission
         } catch (error) {
             console.error("Error submitting request:", error);
@@ -102,6 +106,7 @@ const RequestBorrow = () => {
 
     return (
         <>
+                <Toaster richColors position="top-center" expand={true}/>
             <Header headerTitle="Request Borrow" />
             <Card className="max-w-4xl mx-auto mt-6 p-6 shadow-lg">
                 <CardContent>
