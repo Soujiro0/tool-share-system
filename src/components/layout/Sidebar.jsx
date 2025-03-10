@@ -4,10 +4,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useContext, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
-import Modal from "../ui/Modal";
+import Modal from "../ui/custom/Modal";
 library.add(fas);
 
-export const Sidebar = () => {
+const Sidebar = () => {
     const { logout, auth } = useContext(AuthContext);
 
     const navigate = useNavigate();
@@ -17,17 +17,12 @@ export const Sidebar = () => {
     const baseAdminMenu = [
         { name: "Dashboard", icon: "chart-line", to: "/admin-dashboard" },
         { name: "Inventory", icon: "boxes", to: "/inventory" },
-        { name: "Transactions", icon: "sync-alt", to: "/transactions" },
-        { name: "Activity Logs", icon: "book", to: "/activity-logs" },
-        { name: "Settings", icon: "cog", to: "/settings" },
     ];
 
-    const facultyMenu = [
-        { name: "Dashboard", icon: "chart-line", to: "/faculty-dashboard" },
-        { name: "Approval List", icon: "check-circle", to: "/approval-list" },
-        { name: "History", icon: "history", to: "/history" },
-        { name: "Borrow Item", icon: "hand", to: "/borrow-item" },
-        { name: "Settings", icon: "cog", to: "/settings" },
+    const instructorMenu = [
+        { name: "Dashboard", icon: "chart-line", to: "/instructor-dashboard" },
+        { name: "Request Borrow", icon: "hand-holding", to: "/request-borrow" },
+        { name: "Your Requests", icon: "list", to: "/your-requests" },
     ];
 
     let menuItems = [];
@@ -35,14 +30,14 @@ export const Sidebar = () => {
     if (auth.user?.role === "Super Admin") {
         menuItems = [...baseAdminMenu];
         menuItems.splice(1, 0, {
-            name: "Admin Accounts",
+            name: "Manage Accounts",
             icon: "user-tie",
             to: "/admin-accounts",
         });
     } else if (auth.user?.role === "Admin") {
         menuItems = baseAdminMenu;
-    } else if (auth.user?.role === "Faculty") {
-        menuItems = facultyMenu;
+    } else if (auth.user?.role === "Instructor") {
+        menuItems = instructorMenu;
     }
 
     const openLogoutModal = () => setIsLogoutModalOpen(true);

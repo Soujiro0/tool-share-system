@@ -1,6 +1,6 @@
 import Header from "../../components/layout/Header";
 
-export const AdminDashboard = () => {
+const AdminDashboard = () => {
     return(
         <>
             <Header headerTitle={"Dashboard"} />

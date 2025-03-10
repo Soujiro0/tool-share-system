@@ -1,47 +1,26 @@
+import RequestBorrow from "@/pages/Instructor/RequestBorrow";
+import YourRequests from "@/pages/Instructor/YourRequests";
 import { Outlet, Route, Routes } from "react-router-dom";
-import Navbar from "../components/layout/Navbar";
 import Sidebar from "../components/layout/Sidebar";
-import ActivityLogs from "../pages/Admin/ActivityLogs";
 import Inventory from "../pages/Admin/Inventory";
 import ManageAccounts from "../pages/Admin/ManageAccounts";
-import Transactions from "../pages/Admin/Transactions";
 import AdminLogin from "../pages/AdminLogin";
 import AdminDashboard from "../pages/Dashboards/AdminDashboard";
-import FacultyDashboard from "../pages/Dashboards/FacultyDashboard";
-import ApprovalList from "../pages/Faculty/ApprovalList";
-import BorrowItem from "../pages/Faculty/BorrowItem";
-import History from "../pages/Faculty/History";
-import FacultyLogin from "../pages/FacultyLogin";
+import InstructorDashboard from "../pages/Dashboards/InstructorDashboard";
+import InstructorLogin from "../pages/InstructorLogin";
 import Landing from "../pages/Landing";
-import Settings from "../pages/Settings";
 import ProtectedRoute from "./ProtectedRoute";
-
-const WithNavbar = () => (
-    <>
-        <Navbar />
-        <Outlet />
-    </>
-);
 
 const WithSidebar = () => (
     <div className="flex">
         <Sidebar />
-        <div className="ml-64 w-full p-5 overflow-auto">
+        <div className="ml-64 w-full p-3 overflow-auto">
             <Outlet />
         </div>
     </div>
 );
 
-const WithFacultySidebar = () => (
-    <div className="flex">
-        <Sidebar />
-        <div className="ml-64 w-full p-5 overflow-auto">
-            <Outlet />
-        </div>
-    </div>
-);
-
-export const AppRoute = () => {
+const AppRoute = () => {
     return (
         <Routes>
             {/* Super Admin Routes */}
@@ -55,9 +34,6 @@ export const AppRoute = () => {
                 <Route path="/admin-dashboard" element={<AdminDashboard />} />
                 <Route path="/admin-accounts" element={<ManageAccounts />} /> {/* Only Super Admin */}
                 <Route path="/inventory" element={<Inventory />} />
-                <Route path="/transactions" element={<Transactions />} />
-                <Route path="/activity-logs" element={<ActivityLogs />} />
-                <Route path="/settings" element={<Settings />} />
             </Route>
 
             {/* Admin Routes (No Admin Accounts) */}
@@ -70,31 +46,25 @@ export const AppRoute = () => {
             >
                 <Route path="/admin-dashboard" element={<AdminDashboard />} />
                 <Route path="/inventory" element={<Inventory />} />
-                <Route path="/transactions" element={<Transactions />} />
-                <Route path="/activity-logs" element={<ActivityLogs />} />
-                <Route path="/settings" element={<Settings />} />
             </Route>
 
             {/* Faculty Routes */}
             <Route
                 element={
-                    <ProtectedRoute requiredRole="Faculty">
-                        <WithFacultySidebar />
+                    <ProtectedRoute requiredRole="Instructor">
+                        <WithSidebar />
                     </ProtectedRoute>
                 }
             >
-                <Route path="/faculty-dashboard" element={<FacultyDashboard />} />
-                <Route path="/approval-list" element={<ApprovalList />} />
-                <Route path="/history" element={<History />} />
-                <Route path="borrow-item" element={<BorrowItem />} />
+                <Route path="/instructor-dashboard" element={<InstructorDashboard />} />
+                <Route path="/request-borrow" element={<RequestBorrow />} />
+                <Route path="/your-requests" element={<YourRequests />}/>
             </Route>
 
             {/* Public Routes */}
-            <Route element={<WithNavbar />}>
-                <Route path="/" element={<Landing />} />
-                <Route path="/admin" element={<AdminLogin />} />
-                <Route path="/faculty" element={<FacultyLogin />} />
-            </Route>
+            <Route path="/" element={<Landing />} />
+            <Route path="/admin" element={<AdminLogin />} />
+            <Route path="/instructor" element={<InstructorLogin />} />
         </Routes>
     );
 };
