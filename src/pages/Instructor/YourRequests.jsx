@@ -6,10 +6,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Toaster } from "@/components/ui/sonner";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { AuthContext } from "@/context/AuthContext";
 import { Edit, RefreshCcw, Trash2 } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
+import { toast } from "sonner";
 
 const ITEMS_PER_PAGE = 5;
 
@@ -63,13 +65,18 @@ const YourRequests = () => {
                 await ApiService.BorrowItemService.createItemRequest(itemRequest);
             }
 
+        } catch (error) {
+            console.error("Error updating request:", error);
+        } finally {
             setDeletedItems([]);
             setAddedItems([]);
             fetchRequests();
             setEditRequest(null);
-        } catch (error) {
-            console.error("Error updating request:", error);
         }
+
+        toast.success("UPDATED borrow request successfully", {
+            description: `Request ${editRequest.request_id} has been updated.`,
+        });
     };
 
     const handleDeleteRequest = async () => {
@@ -77,11 +84,16 @@ const YourRequests = () => {
 
         try {
             await ApiService.RequestBorrowService.deleteRequest(confirmDelete);
-            setConfirmDelete(null);
-            fetchRequests();
         } catch (error) {
             console.error("Error deleting request:", error);
+        } finally {
+            setConfirmDelete(null);
+            fetchRequests();
         }
+
+        toast.success("DELETE borrow request successfully", {
+            description: `Request ${confirmDelete} has been deleted.`,
+        });
     };
 
     useEffect(() => {
@@ -91,6 +103,7 @@ const YourRequests = () => {
 
     return (
         <>
+                        <Toaster richColors position="top-center" expand={true}/>
             <Header headerTitle="Your Requests" />
             <Card className="max-w-6xl mx-auto mt-6 p-6 shadow-lg">
                 <CardContent>
