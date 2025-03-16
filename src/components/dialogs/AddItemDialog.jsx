@@ -10,10 +10,12 @@ import { useState } from "react";
 const AddItemDialog = ({ isOpen, onClose, onSave }) => {
     const [formData, setFormData] = useState({
         name: "",
-        property_no: "",
+        property_no: null,
         category_id: "",
         quantity: 1,
         unit: "",
+        brand: null,
+        model: null,
         status: "AVAILABLE",
         item_condition: "GOOD",
         acquisition_date: undefined,
@@ -71,6 +73,20 @@ const AddItemDialog = ({ isOpen, onClose, onSave }) => {
                         <div className="flex flex-col gap-2">
                             <Label>Unit</Label>
                             <Input name="unit" value={formData.unit} onChange={handleChange} placeholder="e.g., pcs, sets" required />
+                        </div>
+                    </div>
+
+                    <div className="flex gap-4">
+                        {/* Brand */}
+                        <div className="flex flex-col gap-2">
+                            <Label>Brand</Label>
+                            <Input type="text" name="brand" value={formData.brand} onChange={handleChange} placeholder="(Optional)" />
+                        </div>
+
+                        {/* Model */}
+                        <div className="flex flex-col gap-2">
+                            <Label>Model</Label>
+                            <Input name="model" value={formData.model} onChange={handleChange} placeholder="(Optional)" />
                         </div>
                     </div>
 

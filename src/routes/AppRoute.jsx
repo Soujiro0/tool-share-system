@@ -1,3 +1,5 @@
+import BorrowedHistory from "@/pages/Admin/BorrowedHistory";
+import RequestTransaction from "@/pages/Admin/RequestTransactions";
 import RequestBorrow from "@/pages/Instructor/RequestBorrow";
 import YourRequests from "@/pages/Instructor/YourRequests";
 import { Outlet, Route, Routes } from "react-router-dom";
@@ -34,6 +36,8 @@ const AppRoute = () => {
                 <Route path="/admin-dashboard" element={<AdminDashboard />} />
                 <Route path="/admin-accounts" element={<ManageAccounts />} /> {/* Only Super Admin */}
                 <Route path="/inventory" element={<Inventory />} />
+                <Route path="/history" element={<BorrowedHistory />} />
+                <Route path="/request-transactions" element={<RequestTransaction />} />
             </Route>
 
             {/* Admin Routes (No Admin Accounts) */}

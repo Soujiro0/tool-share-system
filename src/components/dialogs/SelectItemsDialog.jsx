@@ -103,7 +103,7 @@ const SelectItemsDialog = ({ onAddItems }) => {
                                 </TableCell>
                                 <TableCell>{item.name}</TableCell>
                                 <TableCell>{item.property_no}</TableCell>
-                                <TableCell>{item.category_item_item_id}</TableCell>
+                                <TableCell>{item.category_name}</TableCell>
                                 <TableCell>
                                     {item.quantity} {item.unit}
                                 </TableCell>

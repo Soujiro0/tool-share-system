@@ -1,4 +1,5 @@
 import AddItemModal from "@/components/dialogs/AddItemDialog";
+import BorrowedHistoryDialog from "@/components/dialogs/BorrowedHistoryDialog";
 import DeleteConfirmationDialog from "@/components/dialogs/DeleteConfirmationDialog";
 import EditItemDialog from "@/components/dialogs/EditItemDialog";
 import DataTable from "@/components/tables/DataTable";
@@ -14,9 +15,10 @@ import Header from "../../components/layout/Header";
 const Inventory = () => {
     const [inventory, setInventory] = useState([]);
     const [selectedItem, setSelectedItem] = useState();
-    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-    const [isEditModalOpen, setIsEditDialogOpen] = useState(false);
+    const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+    const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+    const [isBorrowedDialogOpen, setIsBorrowedDialogOpen] = useState(false);
 
     const fetchItems = async () => {
         try {
@@ -32,7 +34,7 @@ const Inventory = () => {
     }, []);
 
     const handleAdd = () => {
-        setIsAddModalOpen(true);
+        setIsAddDialogOpen(true);
     };
 
     const handleEdit = (item) => {
@@ -44,6 +46,11 @@ const Inventory = () => {
         setSelectedItem(item);
         setIsDeleteDialogOpen(true);
     };
+
+    const handleHistory = (item) => {
+        setSelectedItem(item);
+        setIsBorrowedDialogOpen(true)
+    }
 
     const handleSaveAdd = async (newItem) => {
         setInventory((prev) => [...prev, { ...newItem, item_id: prev.length }]);
@@ -101,14 +108,19 @@ const Inventory = () => {
         <>
         <Toaster richColors position="top-center" expand={true}/>
             <Header headerTitle="Inventory Management" />
-            <DataTable columns={columns} handleEdit={handleEdit} handleDelete={handleDelete} data={inventory} />
-            <AddItemModal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} onSave={handleSaveAdd} />
-            <EditItemDialog isOpen={isEditModalOpen} onClose={() => setIsEditDialogOpen(false)} item={selectedItem} onSave={handleSaveEdit} />
+            <DataTable columns={columns} handleEdit={handleEdit} handleDelete={handleDelete} data={inventory} handleHistory={handleHistory} />
+            <AddItemModal isOpen={isAddDialogOpen} onClose={() => setIsAddDialogOpen(false)} onSave={handleSaveAdd} />
+            <EditItemDialog isOpen={isEditDialogOpen} onClose={() => setIsEditDialogOpen(false)} item={selectedItem} onSave={handleSaveEdit} />
             <DeleteConfirmationDialog
                 isOpen={isDeleteDialogOpen}
                 onClose={() => setIsDeleteDialogOpen(false)}
                 item={selectedItem}
                 onConfirm={handleDeleteConfirm}
+            />
+                <BorrowedHistoryDialog
+                isOpen={isBorrowedDialogOpen}
+                onClose={() => setIsBorrowedDialogOpen(false)}
+                selectedItem={selectedItem}
             />
             {/* Floating Add Button */}
             <Button
@@ -117,11 +129,6 @@ const Inventory = () => {
             >
                 <Plus />
             </Button>
-            {/* <Alert className="fixed top-50 left-50">
-                <Terminal className="h-4 w-4" />
-                <AlertTitle>Heads up!</AlertTitle>
-                <AlertDescription>You can add components and dependencies to your app using the cli.</AlertDescription>
-            </Alert> */}
         </>
     );
 };

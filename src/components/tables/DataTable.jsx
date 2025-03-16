@@ -8,21 +8,22 @@ import PropTypes from "prop-types";
 import { useMemo, useState } from "react";
 import { Label } from "../ui/label";
 
-export function DataTable({ columns, data, handleEdit, handleDelete }) {
+export function DataTable({ columns, data, handleEdit, handleDelete, handleHistory }) {
     const [globalFilter, setGlobalFilter] = useState("");
     const [filters, setFilters] = useState({ status: "", item_condition: "", name: "" });
     const [sorting, setSorting] = useState([]);
     const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
+    // const [selectedItem, setSelectedItem] = useState(null);
 
     // Optimize filtering to prevent infinite re-renders
     const filteredData = useMemo(() => {
-        return data.filter(
-            (item) =>
-                (filters.status ? item.status === filters.status : true) &&
-                (filters.item_condition ? item.item_condition === filters.item_condition : true) &&
-                (filters.name ? item.name.toLowerCase().includes(filters.name.toLowerCase()) : true)
+        return data.filter((item) =>
+            (filters.status && filters.status !== "ALL" ? item.status === filters.status : true) &&
+            (filters.item_condition && filters.item_condition !== "ALL" ? item.item_condition === filters.item_condition : true) &&
+            (filters.name ? item.name.toLowerCase().includes(filters.name.toLowerCase()) : true)
         );
     }, [data, filters]);
+    
 
     const table = useReactTable({
         data: filteredData,
@@ -141,7 +142,11 @@ export function DataTable({ columns, data, handleEdit, handleDelete }) {
                 </thead>
                 <tbody>
                     {table.getRowModel().rows.map((row) => (
-                        <tr key={row.id} className="border">
+                        <tr 
+                            key={row.id} 
+                            className="border cursor-pointer hover:bg-gray-100"
+                            onClick={() => handleHistory(row.original)}
+                        >
                             {row.getVisibleCells().map((cell) => (
                                 <td key={cell.id} className="border p-2">
                                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -174,6 +179,29 @@ export function DataTable({ columns, data, handleEdit, handleDelete }) {
                     </PaginationContent>
                 </Pagination>
             </div>
+
+            {/* Dialog for Item Details
+            <Dialog open={!!selectedItem} onOpenChange={() => setSelectedItem(null)}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Item Details</DialogTitle>
+                        <DialogDescription>
+                            {selectedItem ? (
+                                <div className="space-y-2">
+                                    <p><strong>Name:</strong> {selectedItem.name}</p>
+                                    <p><strong>Category:</strong> {selectedItem.category_name}</p>
+                                    <p><strong>Quantity:</strong> {selectedItem.quantity}</p>
+                                    <p><strong>Condition:</strong> {selectedItem.item_condition}</p>
+                                    <p><strong>Status:</strong> {selectedItem.status}</p>
+                                    <p><strong>Acquired:</strong> {selectedItem.acquisition_date}</p>
+                                </div>
+                            ) : (
+                                <p>Loading...</p>
+                            )}
+                        </DialogDescription>
+                    </DialogHeader>
+                </DialogContent>
+            </Dialog> */}
         </div>
     );
 }
@@ -183,6 +211,7 @@ DataTable.propTypes = {
     data: PropTypes.array.isRequired,
     handleEdit: PropTypes.func.isRequired,
     handleDelete: PropTypes.func.isRequired,
+    handleHistory: PropTypes.func.isRequired
 };
 
 export default DataTable;

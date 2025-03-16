@@ -16,7 +16,6 @@ import { toast } from "sonner";
 const ITEMS_PER_PAGE = 5;
 
 const YourRequests = () => {
-
     const { auth } = useContext(AuthContext);
     const userId = auth.user?.user_id;
 
@@ -42,7 +41,7 @@ const YourRequests = () => {
 
     const fetchRequests = async () => {
         try {
-            const data = await ApiService.RequestBorrowService.getRequests(userId);
+            const data = await ApiService.RequestBorrowService.getUserRequests(userId);
             setRequests(data.request);
         } catch (error) {
             console.error("Error fetching requests:", error);
@@ -60,11 +59,10 @@ const YourRequests = () => {
             for (const items of addedItems) {
                 const itemRequest = {
                     request_id: editRequest.request_id,
-                    ...items
-                }
+                    ...items,
+                };
                 await ApiService.BorrowItemService.createItemRequest(itemRequest);
             }
-
         } catch (error) {
             console.error("Error updating request:", error);
         } finally {
@@ -98,12 +96,12 @@ const YourRequests = () => {
 
     useEffect(() => {
         fetchRequests();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (
         <>
-                        <Toaster richColors position="top-center" expand={true}/>
+            <Toaster richColors position="top-center" expand={true} />
             <Header headerTitle="Your Requests" />
             <Card className="max-w-6xl mx-auto mt-6 p-6 shadow-lg">
                 <CardContent>
@@ -201,7 +199,13 @@ const YourRequests = () => {
             </Card>
 
             {/* Edit Dialog */}
-            <EditRequestDialog editRequest={editRequest} setEditRequest={setEditRequest} handleEditSubmit={handleEditRequest} setAddedItems={setAddedItems} setDeletedItems={setDeletedItems} />
+            <EditRequestDialog
+                editRequest={editRequest}
+                setEditRequest={setEditRequest}
+                handleEditSubmit={handleEditRequest}
+                setAddedItems={setAddedItems}
+                setDeletedItems={setDeletedItems}
+            />
 
             {/* Delete Confirmation */}
             <DeleteRequestDialog confirmDelete={confirmDelete} setConfirmDelete={setConfirmDelete} handleDelete={handleDeleteRequest} />

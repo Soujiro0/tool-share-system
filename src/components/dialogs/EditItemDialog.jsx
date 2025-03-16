@@ -79,6 +79,20 @@ const EditItemDialog = ({ isOpen, onClose, item, onSave }) => {
                     </div>
 
                     <div className="flex gap-4">
+                        {/* Brand */}
+                        <div className="flex flex-col gap-2">
+                            <Label>Brand</Label>
+                            <Input type="text" name="brand" value={editedItem.brand} onChange={handleChange} placeholder="(Optional)" />
+                        </div>
+
+                        {/* Model */}
+                        <div className="flex flex-col gap-2">
+                            <Label>Model</Label>
+                            <Input name="model" value={editedItem.model} onChange={handleChange} placeholder="(Optional))" />
+                        </div>
+                    </div>
+
+                    <div className="flex gap-4">
                         {/* Status */}
                         <div className="flex flex-col gap-2">
                             <Label>Status</Label>

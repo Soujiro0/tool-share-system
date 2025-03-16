@@ -1,5 +1,23 @@
 import { API_BASE } from "./config";
 
+export async function getItemHistory(itemId) {
+    try {
+        const response = await fetch(`${API_BASE}/borrow-request-items.php/${itemId}?history=true`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+
+        const data = await response.json();
+        return data;
+
+    } catch (error) {
+        console.error('Error fetching item history', error);
+        throw error;
+    }
+}
+
 export async function createItemRequest(requestData) {
     try {
         const response = await fetch(`${API_BASE}/borrow-request-items.php`, {

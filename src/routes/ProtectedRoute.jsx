@@ -12,7 +12,7 @@ const ProtectedRoute = ({ children, requiredRole }) => {
     }
 
     // If a role is required, ensure the user has it
-    const allowedRoles = ["Super Admin", "Admin", "Instructor"]; // Add roles that should be allowed
+    const allowedRoles = ["SUPER ADMIN", "ADMIN", "INSTRUCTOR"]; // Add roles that should be allowed
 
     if (requiredRole && (!auth.user || !allowedRoles.includes(auth.user.role))) {
         return <Navigate to="/" replace />;
