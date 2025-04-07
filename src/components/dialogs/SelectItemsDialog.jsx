@@ -1,164 +1,155 @@
 import ApiService from "@/api/ApiService";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
 
-const SelectItemsDialog = ({ onAddItems }) => {
+const SelectItemsDialog = ({ open, onClose, selectedItems, onSelect }) => {
+    const [localItems, setLocalItems] = useState([]);
     const [items, setItems] = useState([]);
     const [search, setSearch] = useState("");
-    const [statusFilter, setStatusFilter] = useState("All");
-    const [selectedItems, setSelectedItems] = useState([]);
 
     const fetchItems = async () => {
         try {
             const data = await ApiService.ItemService.getItems();
-            console.log(data);
-            setItems(data.items);
+            setItems(data.items || []);
         } catch (error) {
-            console.error("Error fetching items:", error);
+            console.log("Error fetching items:", error);
         }
     };
 
+    const handleConfirm = () => {
+        const selected = localItems.filter((item) => item.checked).map(({ item_id, name, category_name, quantity }) => ({ item_id, name, category_name, quantity }));
+        console.log(selected);
+        onSelect(selected);
+        onClose();
+    };
+
     useEffect(() => {
-        fetchItems();
-    }, []);
+        if (open) {
+            fetchItems();
+        }
+    }, [open]);
 
-    const handleSelect = (item) => {
-        setSelectedItems((prev) =>
-            prev.some((i) => i.item_id === item.item_id)
-                ? prev.filter((i) => i.item_id !== item.item_id)
-                : [...prev, { ...item, quantityToBorrow: 1 }]
-        );
-    };
+    useEffect(() => {
+        const initial = items.map((item) => {
+            const found = selectedItems.find((i) => i.item_id === item.item_id);
+            return {
+                ...item,
+                quantity_available: item.quantity, // <--- this is your available stock
+                quantity: found?.quantity || 1,
+                checked: !!found,
+            };
+        });
+        setLocalItems(initial);
+    }, [items, selectedItems]);
 
-    const handleQuantityChange = (itemId, amount) => {
-        setSelectedItems((prev) =>
-            prev.map((item) =>
-                item.item_id === itemId ? { ...item, quantityToBorrow: Math.max(1, Math.min(item.quantity, item.quantityToBorrow + amount)) } : item
-            )
-        );
-    };
-
-    const handleAddToSlip = () => {
-        onAddItems(selectedItems);
-        setSelectedItems([]);
-    };
-
-    const filteredItems = items.filter(
-        (item) => item.name.toLowerCase().includes(search.toLowerCase()) && (statusFilter === "All" || item.status === statusFilter)
-    );
+    const filteredItems = localItems.filter((item) => item.name.toLowerCase().includes(search.toLowerCase()));
 
     return (
-        <DialogContent width="max-w-7xl">
-            <DialogHeader>
-                <DialogTitle>Select Items to Borrow</DialogTitle>
-            </DialogHeader>
+        <Dialog open={open} onOpenChange={onClose}>
+            <DialogContent width="max-w-2xl">
+                <DialogHeader>
+                    <DialogTitle>Select Items to Borrow</DialogTitle>
+                </DialogHeader>
 
-            {/* Search & Filters */}
-            <div className="flex gap-2 mb-4">
-                <Input placeholder="Search items..." value={search} onChange={(e) => setSearch(e.target.value)} className="flex-1" />
-                <Select onValueChange={setStatusFilter} defaultValue="All">
-                    <SelectTrigger className="w-40">
-                        <SelectValue placeholder="All Status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="All">All Status</SelectItem>
-                        <SelectItem value="Available">Available</SelectItem>
-                        <SelectItem value="No Stock">No Stock</SelectItem>
-                    </SelectContent>
-                </Select>
-            </div>
+                {/* Search Input */}
+                <Input placeholder="Search item..." value={search} onChange={(e) => setSearch(e.target.value)} className="mb-4" />
 
-            {/* Items Table */}
-            <ScrollArea className="max-h-[400px] max-w-full overflow-auto border rounded-lg">
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead className="w-10"></TableHead>
-                            <TableHead>Name</TableHead>
-                            <TableHead>Property No.</TableHead>
-                            <TableHead>Category</TableHead>
-                            <TableHead>Available</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead>Condition</TableHead>
-                            <TableHead>Quantity to Borrow</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {filteredItems.map((item) => (
-                            <TableRow key={item.item_id}>
-                                <TableCell>
-                                    <Checkbox
-                                        checked={selectedItems.some((i) => i.item_id === item.item_id)}
-                                        onCheckedChange={() => handleSelect(item)}
-                                        disabled={item.quantity === 0}
-                                    />
-                                </TableCell>
-                                <TableCell>{item.name}</TableCell>
-                                <TableCell>{item.property_no}</TableCell>
-                                <TableCell>{item.category_item_item_id}</TableCell>
-                                <TableCell>
-                                    {item.quantity} {item.unit}
-                                </TableCell>
-                                <TableCell>
-                                    <Badge variant={item.status === "AVAILABLE" ? "success" : "destructive"}>{item.status}</Badge>
-                                </TableCell>
-                                <TableCell>{item.item_condition}</TableCell>
-                                <TableCell>
-                                    <div className="flex items-center space-x-2">
-                                        <Button
-                                            size="icon"
-                                            variant="outline"
-                                            onClick={() => handleQuantityChange(item.item_id, -1)}
-                                            disabled={!selectedItems.some((i) => i.item_id === item.item_id) || item.quantity === 0}
-                                        >
-                                            –
-                                        </Button>
-                                        <span>{selectedItems.find((i) => i.item_id === item.item_id)?.quantityToBorrow || 0}</span>
-                                        <Button
-                                            size="icon"
-                                            variant="outline"
-                                            onClick={() => handleQuantityChange(item.item_id, 1)}
-                                            disabled={!selectedItems.some((i) => i.item_id === item.item_id) || item.quantity === 0}
-                                        >
-                                            +
-                                        </Button>
-                                    </div>
-                                </TableCell>
+                {/* Scrollable list */}
+                <ScrollArea className="max-h-96 pr-2">
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead className="w-10"></TableHead>
+                                <TableHead>Item Name</TableHead>
+                                <TableHead>Quantity</TableHead>
+                                <TableHead className="text-right">Available</TableHead>
+                                <TableHead className="text-right">Quantity to Borrow</TableHead>
                             </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-                <ScrollBar orientation="horizontal" />
-            </ScrollArea>
+                        </TableHeader>
+                        <TableBody>
+                            {filteredItems.length > 0 ? (
+                                filteredItems.map((item, index) => (
+                                    <TableRow key={item.item_id}>
+                                        <TableCell>
+                                            <Checkbox
+                                                checked={item.checked}
+                                                onCheckedChange={(val) => {
+                                                    const updated = [...localItems];
+                                                    updated[index].checked = val;
+                                                    setLocalItems(updated);
+                                                }}
+                                            />
+                                        </TableCell>
+                                        <TableCell>{item.name}</TableCell>
+                                        <TableCell>{item.category_name}</TableCell>
+                                        <TableCell className="text-center text-sm text-muted-foreground">{item.quantity_available} {item.unit}</TableCell>
+                                        <TableCell className="flex items-center justify-end">
+                                            <div className="flex items-center space-x-2">
+                                                <Button
+                                                    size="sm"
+                                                    variant="outline"
+                                                    onClick={() => {
+                                                        const updated = [...localItems];
+                                                        if (updated[index].quantity > 1) updated[index].quantity -= 1;
+                                                        setLocalItems(updated);
+                                                    }}
+                                                >
+                                                    -
+                                                </Button>
+                                                <span>{item.quantity}</span>
+                                                <Button
+                                                    size="sm"
+                                                    variant="outline"
+                                                    onClick={() => {
+                                                        const updated = [...localItems];
+                                                        if (updated[index].quantity < updated[index].quantity_available) {
+                                                            updated[index].quantity += 1;
+                                                            setLocalItems(updated);
+                                                        }
+                                                    }}
+                                                >
+                                                    +
+                                                </Button>
+                                            </div>
+                                        </TableCell>
+                                    </TableRow>
+                                ))
+                            ) : (
+                                <TableRow>
+                                    <TableCell colSpan={4} className="text-center text-sm text-muted-foreground">
+                                        No items found.
+                                    </TableCell>
+                                </TableRow>
+                            )}
+                        </TableBody>
+                    </Table>
+                </ScrollArea>
 
-            {/* Selected Items & Add Button */}
-            <div className="flex justify-between items-center mt-2">
-                <span className="text-sm">
-                    {selectedItems.length} items selected{" "}
-                    {selectedItems.length > 0 && (
-                        <button onClick={() => setSelectedItems([])} className="text-blue-600 underline">
-                            Clear all
-                        </button>
-                    )}
-                </span>
-                <Button onClick={handleAddToSlip} disabled={selectedItems.length === 0}>
-                    + Add to Borrower Slip
+                <Button className="w-full mt-4" onClick={handleConfirm}>
+                    Add Selected Items
                 </Button>
-            </div>
-        </DialogContent>
+            </DialogContent>
+        </Dialog>
     );
 };
 
 SelectItemsDialog.propTypes = {
-    onAddItems: PropTypes.func.isRequired,
+    open: PropTypes.bool.isRequired,
+    onClose: PropTypes.func.isRequired,
+    selectedItems: PropTypes.arrayOf(
+        PropTypes.shape({
+            item_id: PropTypes.number.isRequired,
+            name: PropTypes.string.isRequired,
+            quantity: PropTypes.number.isRequired,
+        })
+    ).isRequired,
+    onSelect: PropTypes.func.isRequired,
 };
 
 export default SelectItemsDialog;

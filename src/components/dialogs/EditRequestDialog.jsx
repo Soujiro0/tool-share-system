@@ -1,151 +1,171 @@
+import ApiService from "@/api/ApiService";
 import SelectItemsDialog from "@/components/dialogs/SelectItemsDialog";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Plus, Trash2 } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area"; // Import ShadCN ScrollArea
+import { Toaster } from "@/components/ui/sonner";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"; // Import ShadCN Table components
+import { Textarea } from "@/components/ui/textarea";
+import { Trash } from "lucide-react"; // Import Trash icon from lucide-react
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
-const EditRequestDialog = ({ editRequest, setEditRequest, handleEditSubmit, setAddedItems, setDeletedItems }) => {
-    const [localNewlyAddedItems, setLocalNewlyAddedItems] = useState([]);
-    const [localDeletedItems, setLocalDeletedItems] = useState([]);
+const EditRequestDialog = ({ request, onClose, setData, refresh }) => {
+    const [remarks, setRemarks] = useState(request.remarks);
+    const [items, setItems] = useState(request.requested_items);
+    const [isSelectItemsDialogOpen, setSelectItemsDialogOpen] = useState(false); // State for opening the dialog
 
-    const handleAddItems = (selectedItems) => {
-        setEditRequest((prevRequest) => {
-            if (!prevRequest) return prevRequest;
+    const handleSubmit = async () => {
+        const payload = {
+            remarks,
+            items: items.map((i) => ({ item_id: i.item_id, quantity: i.quantity })),
+        };
+        console.log(payload);
+        
+        try {
+            // Send the update request
+            const data = await ApiService.RequestBorrowService.updateRequestFaculty(request.request_id, payload);
+            console.log("Request updated successfully:", data);
     
-            // Clone existing borrowed_items
-            const updatedItems = [...prevRequest.borrowed_items];
-    
-            selectedItems.forEach((newItem) => {
-                const existingItemIndex = updatedItems.findIndex((item) => item.item_id === newItem.item_id);
-    
-                if (existingItemIndex !== -1) {
-                    // Update quantity if item already exists
-                    updatedItems[existingItemIndex].quantityToBorrow += newItem.quantityToBorrow;
-                } else {
-                    // Add new item and store item_id
-                    updatedItems.push({ ...newItem, request_item_id: crypto.randomUUID() });
-                    setLocalNewlyAddedItems((prev) => [...prev, { 
-                        item_id: newItem.item_id, 
-                        quantity: newItem.quantityToBorrow, 
-                        item_condition_out: newItem.item_condition 
-                    }]);
-                }
+            // Success message
+            toast.success("Request updated successfully", {
+                description: "Your request has been updated.",
             });
     
-            return {
-                ...prevRequest,
-                borrowed_items: updatedItems,
-            };
-        });
-    };
-    
-
-    const handleDeleteItem = (requestItemId) => {
-        if (!localDeletedItems.includes(requestItemId)) {
-            setLocalDeletedItems((prev) => [...prev, requestItemId]);
+            // Update the data in state after successful API call
+        } catch (error) {
+            console.log("Error updating request:", error);
+            
+            // Error message
+            toast.error("Error updating request");
+        } finally {
+            // Close the dialog after the state is updated
+            onClose();
+            // setData((prev) =>
+            //     prev.map((r) =>
+            //         r.request_id === request.request_id
+            //             ? { ...r, remarks: payload.remarks, requested_items: payload.items }
+            //             : r
+            //     )
+            // );
+            refresh();
+            setData((prev) =>
+                prev.map((r) =>
+                    r.request_id === request.request_id ? { ...r, ...payload } : r
+                )
+            );
         }
     };
+    
+    
 
-    // Handles form submission, sends deleted items back to parent
-    const handleSubmit = (e) => {
-        e.preventDefault();
-    
-        // Log all newly added item IDs before submission
-        console.log("Newly added item IDs:", localNewlyAddedItems);
-    
-        handleEditSubmit();
-        setEditRequest(null);
+    const handleSelectItems = (selectedItems) => {
+        // Update the items in the state with selected items and their quantities
+        setItems(selectedItems);
+        setSelectItemsDialogOpen(false); // Close the dialog after selection
+    };
+
+    const handleRemoveItem = (itemId) => {
+        // Remove item by filtering out the selected item
+        setItems(items.filter((item) => item.item_id !== itemId));
     };
 
     useEffect(() => {
-        setDeletedItems([...localDeletedItems]); 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [localDeletedItems]);
-
-    useEffect(() => {
-        setAddedItems([...localNewlyAddedItems]);  
-    }, [localNewlyAddedItems, setAddedItems]);
-    
-
-    if (!editRequest) return null;
+        console.log("Selected items:", items);
+    });
 
     return (
-        <Dialog open={true} onOpenChange={() => setEditRequest(null)}>
-            <DialogContent>
-                <DialogHeader>
-                    <DialogTitle>Edit Request</DialogTitle>
-                </DialogHeader>
-                <form onSubmit={handleSubmit} className="grid gap-4">
-                    {/* Request ID (Read-Only) */}
-                    <div className="flex flex-col gap-2">
-                        <Label>Request ID:</Label>
-                        <Input value={editRequest.request_id} disabled className="bg-gray-100" />
+        <>
+            <Toaster richColors position="top-center" expand={true} />
+            <Dialog open onOpenChange={onClose}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Edit Request</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-2">
+                        <h3 className="font-medium">Purpose</h3>
+                        <Textarea
+                                className="resize-none"
+                                placeholder="Write your purpose of request"
+                                value={remarks}
+                                onChange={(e) => setRemarks(e.target.value)}
+                                name="purpose"
+                            />
+
+                        {/* Show selected items in a table */}
+                        <div>
+                            <h3 className="font-medium">Selected Items</h3>
+                            <ScrollArea className="max-h-96 pr-2">
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead>Item Name</TableHead>
+                                            <TableHead>Category</TableHead>
+                                            <TableHead className="text-right">Quantity</TableHead>
+                                            <TableHead className="text-center">Actions</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {items.length > 0 ? (
+                                            items.map((item) => (
+                                                <TableRow key={item.item_id}>
+                                                    <TableCell>{item.name}</TableCell>
+                                                    <TableCell>{item.category_name}</TableCell>
+                                                    <TableCell className="text-right">{item.quantity}</TableCell>
+                                                    <TableCell className="text-center">
+                                                        <Button
+                                                            size="sm"
+                                                            variant="destructive"
+                                                            onClick={() => handleRemoveItem(item.item_id)} // Remove item on click
+                                                        >
+                                                            <Trash className="w-4 h-4" />
+                                                        </Button>
+                                                    </TableCell>
+                                                </TableRow>
+                                            ))
+                                        ) : (
+                                            <TableRow>
+                                                <TableCell colSpan={4} className="text-center text-sm text-muted-foreground">
+                                                    No items selected.
+                                                </TableCell>
+                                            </TableRow>
+                                        )}
+                                    </TableBody>
+                                </Table>
+                            </ScrollArea>
+                        </div>
+
+                        <Button
+                            className="mt-4"
+                            onClick={() => setSelectItemsDialogOpen(true)} // Open the select items dialog
+                        >
+                            Edit Items
+                        </Button>
                     </div>
 
-                    {/* Request Date (Read-Only) */}
-                    <div className="flex flex-col gap-2">
-                        <Label>Request Date:</Label>
-                        <Input value={editRequest.request_date} disabled className="bg-gray-100" />
-                    </div>
+                    <Button className="mt-4" onClick={handleSubmit}>
+                        Save Changes
+                    </Button>
+                </DialogContent>
+            </Dialog>
 
-                    {/* Borrowed Items List with Delete Buttons */}
-                    <div className="flex flex-col gap-2">
-                        <Label>Borrowed Items:</Label>
-                        <Card className="border p-2 rounded-md">
-                            <CardContent className="p-0">
-                                {editRequest.borrowed_items.length > 0 ? (
-                                    editRequest.borrowed_items.map((item) => (
-                                        <div key={item.request_item_id} className="flex justify-between items-center p-2 border-b">
-                                            <span className={localDeletedItems.includes(item.request_item_id) ? "line-through text-gray-400" : ""}>
-                                                {item.name}
-                                            </span>
-                                            <Button
-                                                type="button"
-                                                size="icon"
-                                                variant="destructive"
-                                                onClick={() => handleDeleteItem(item.request_item_id)}
-                                                disabled={localDeletedItems.includes(item.request_item_id)}
-                                            >
-                                                <Trash2 className="w-4 h-4" />
-                                            </Button>
-                                        </div>
-                                    ))
-                                ) : (
-                                    <p className="text-center text-gray-500 p-2">No items in request.</p>
-                                )}
-                            </CardContent>
-                            <Dialog>
-                                <DialogTrigger asChild>
-                                    <Button variant="outline">
-                                        Select Items
-                                        <Plus className="ml-2" />
-                                    </Button>
-                                </DialogTrigger>
-                                <SelectItemsDialog onAddItems={(handleAddItems)} />
-                            </Dialog>
-                        </Card>
-                    </div>
-
-                    <DialogFooter>
-                        <Button type="submit">Save Changes</Button>
-                    </DialogFooter>
-                </form>
-            </DialogContent>
-        </Dialog>
+            {/* Select Items Dialog */}
+            <SelectItemsDialog
+                open={isSelectItemsDialogOpen}
+                onClose={() => setSelectItemsDialogOpen(false)}
+                selectedItems={items}
+                onSelect={handleSelectItems}
+            />
+        </>
     );
 };
 
 EditRequestDialog.propTypes = {
-    editRequest: PropTypes.object,
-    setEditRequest: PropTypes.func.isRequired,
-    handleEditSubmit: PropTypes.func.isRequired,
-    setAddedItems: PropTypes.array.isRequired,
-    deletedItems: PropTypes.array.isRequired,
-    setDeletedItems: PropTypes.func.isRequired,
+    request: PropTypes.object.isRequired,
+    onClose: PropTypes.func.isRequired,
+    setData: PropTypes.func.isRequired,
+    refresh: PropTypes.func.isRequired,
 };
 
 export default EditRequestDialog;

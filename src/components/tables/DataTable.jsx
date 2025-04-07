@@ -8,25 +8,21 @@ import PropTypes from "prop-types";
 import { useMemo, useState } from "react";
 import { Label } from "../ui/label";
 
-export function DataTable({ columns, data, handleEdit, handleDelete }) {
+export function DataTable({ columns, data, onViewDetails }) {
     const [globalFilter, setGlobalFilter] = useState("");
-    const [filters, setFilters] = useState({ status: "", item_condition: "", name: "" });
+    const [filters, setFilters] = useState({ name: "" });
     const [sorting, setSorting] = useState([]);
     const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
+    // const [selectedItem, setSelectedItem] = useState(null);
 
     // Optimize filtering to prevent infinite re-renders
     const filteredData = useMemo(() => {
-        return data.filter(
-            (item) =>
-                (filters.status ? item.status === filters.status : true) &&
-                (filters.item_condition ? item.item_condition === filters.item_condition : true) &&
-                (filters.name ? item.name.toLowerCase().includes(filters.name.toLowerCase()) : true)
-        );
+        return data.filter((item) => (filters.name ? item.name.toLowerCase().includes(filters.name.toLowerCase()) : true));
     }, [data, filters]);
 
     const table = useReactTable({
         data: filteredData,
-        columns: columns(handleEdit, handleDelete),
+        columns: columns(onViewDetails),
         state: { globalFilter, sorting, pagination },
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
@@ -78,30 +74,6 @@ export function DataTable({ columns, data, handleEdit, handleDelete }) {
                     value={filters.name}
                     onChange={(e) => setFilters((prev) => ({ ...prev, name: e.target.value }))}
                 />
-
-                {/* ShadCN Select for Status */}
-                <Select onValueChange={(value) => setFilters((prev) => ({ ...prev, status: value }))} value={filters.status}>
-                    <SelectTrigger className="w-[200px]">
-                        <SelectValue placeholder="Filter by Status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="ALL">All Status</SelectItem>
-                        <SelectItem value="AVAILABLE">Available</SelectItem>
-                        <SelectItem value="NO STOCK">No Stock</SelectItem>
-                    </SelectContent>
-                </Select>
-
-                {/* ShadCN Select for Item Condition */}
-                <Select onValueChange={(value) => setFilters((prev) => ({ ...prev, item_condition: value }))} value={filters.item_condition}>
-                    <SelectTrigger className="w-[200px]">
-                        <SelectValue placeholder="Filter by Condition" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="ALL">All Conditions</SelectItem>
-                        <SelectItem value="GOOD">Good</SelectItem>
-                        <SelectItem value="DAMAGED">Damaged</SelectItem>
-                    </SelectContent>
-                </Select>
             </div>
 
             {/* Number of Entries (ShadCN Select) */}
@@ -141,10 +113,12 @@ export function DataTable({ columns, data, handleEdit, handleDelete }) {
                 </thead>
                 <tbody>
                     {table.getRowModel().rows.map((row) => (
-                        <tr key={row.id} className="border">
+                        <tr key={row.id} className="border cursor-pointer hover:bg-gray-100">
                             {row.getVisibleCells().map((cell) => (
                                 <td key={cell.id} className="border p-2">
-                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                    {flexRender(cell.column.columnDef.cell, cell.getContext()) ?? (
+                                        <span className="text-gray-400 bg-amber-100">aaaa</span> // Fallback if null or undefined
+                                    )}
                                 </td>
                             ))}
                         </tr>
@@ -183,6 +157,8 @@ DataTable.propTypes = {
     data: PropTypes.array.isRequired,
     handleEdit: PropTypes.func.isRequired,
     handleDelete: PropTypes.func.isRequired,
+    handleHistory: PropTypes.func.isRequired,
+    onViewDetails: PropTypes.func.isRequired,
 };
 
 export default DataTable;

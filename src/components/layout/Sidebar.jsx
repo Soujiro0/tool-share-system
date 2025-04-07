@@ -15,28 +15,30 @@ const Sidebar = () => {
     const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
     const baseAdminMenu = [
-        { name: "Dashboard", icon: "chart-line", to: "/admin-dashboard" },
+        // { name: "Dashboard", icon: "chart-line", to: "/admin-dashboard" },
         { name: "Inventory", icon: "boxes", to: "/inventory" },
+        // { name: "History", icon: "clock-rotate-left", to: "/history" },
+        { name: "Request Trasactions", icon: "clipboard", to: "/request-transactions" }
     ];
 
     const instructorMenu = [
-        { name: "Dashboard", icon: "chart-line", to: "/instructor-dashboard" },
+        // { name: "Dashboard", icon: "chart-line", to: "/instructor-dashboard" },
         { name: "Request Borrow", icon: "hand-holding", to: "/request-borrow" },
         { name: "Your Requests", icon: "list", to: "/your-requests" },
     ];
 
     let menuItems = [];
 
-    if (auth.user?.role === "Super Admin") {
+    if (auth.user?.role === "SUPER_ADMIN") {
         menuItems = [...baseAdminMenu];
         menuItems.splice(1, 0, {
             name: "Manage Accounts",
             icon: "user-tie",
             to: "/admin-accounts",
         });
-    } else if (auth.user?.role === "Admin") {
+    } else if (auth.user?.role === "ADMIN") {
         menuItems = baseAdminMenu;
-    } else if (auth.user?.role === "Instructor") {
+    } else if (auth.user?.role === "INSTRUCTOR") {
         menuItems = instructorMenu;
     }
 

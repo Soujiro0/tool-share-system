@@ -15,7 +15,20 @@ const AdminLogin = () => {
         try {
             const data = await ApiService.LoginService.loginApi(username, password);
             login(data.token);
-            navigate("/admin-dashboard");
+
+            switch (data.user.role) {
+                case "SUPER_ADMIN":
+                    navigate("/admin-dashboard");
+                    break;
+                case "ADMIN":
+                    navigate("/admin-dashboard");
+                    break;
+                case "INSTRUCTOR":
+                    navigate("/instructor-dashboard");
+                    break;
+                default:
+                    navigate("/");
+            }
         } catch (error) {
             alert(error.message);
         }

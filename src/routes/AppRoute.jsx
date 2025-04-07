@@ -1,13 +1,13 @@
+import BorrowedHistory from "@/pages/Admin/BorrowedHistory";
+import RequestTransaction from "@/pages/Admin/RequestTransactions";
 import RequestBorrow from "@/pages/Instructor/RequestBorrow";
 import YourRequests from "@/pages/Instructor/YourRequests";
 import { Outlet, Route, Routes } from "react-router-dom";
 import Sidebar from "../components/layout/Sidebar";
 import Inventory from "../pages/Admin/Inventory";
 import ManageAccounts from "../pages/Admin/ManageAccounts";
-import AdminLogin from "../pages/AdminLogin";
 import AdminDashboard from "../pages/Dashboards/AdminDashboard";
 import InstructorDashboard from "../pages/Dashboards/InstructorDashboard";
-import InstructorLogin from "../pages/InstructorLogin";
 import Landing from "../pages/Landing";
 import ProtectedRoute from "./ProtectedRoute";
 
@@ -34,6 +34,8 @@ const AppRoute = () => {
                 <Route path="/admin-dashboard" element={<AdminDashboard />} />
                 <Route path="/admin-accounts" element={<ManageAccounts />} /> {/* Only Super Admin */}
                 <Route path="/inventory" element={<Inventory />} />
+                <Route path="/history" element={<BorrowedHistory />} />
+                <Route path="/request-transactions" element={<RequestTransaction />} />
             </Route>
 
             {/* Admin Routes (No Admin Accounts) */}
@@ -63,8 +65,6 @@ const AppRoute = () => {
 
             {/* Public Routes */}
             <Route path="/" element={<Landing />} />
-            <Route path="/admin" element={<AdminLogin />} />
-            <Route path="/instructor" element={<InstructorLogin />} />
         </Routes>
     );
 };
