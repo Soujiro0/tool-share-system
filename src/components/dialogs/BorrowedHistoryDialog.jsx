@@ -1,10 +1,15 @@
 import ApiService from "@/api/ApiService";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useEffect, useState } from "react";
 
 const BorrowedHistoryDialog = ({ isOpen, onClose, selectedItem }) => {
-    const [history, setHistory] = useState([]);
+    const [history, setHistory] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
@@ -12,10 +17,10 @@ const BorrowedHistoryDialog = ({ isOpen, onClose, selectedItem }) => {
         setLoading(true);
         setError(null);
         try {
-            console.log(selectedItem)
-            console.log(selectedItem.item_id)
-            const data = await ApiService.BorrowItemService.getItemHistory(selectedItem.item_id);
-            setHistory(data.borrow_history);
+            const response = await ApiService.BorrowItemService.getItemHistory(
+                selectedItem.unit_id // Add unit_id to the API call
+            );
+            setHistory(response.data);
         } catch (err) {
             console.error("Error fetching item history:", err);
             setError("Failed to load history");
@@ -26,9 +31,7 @@ const BorrowedHistoryDialog = ({ isOpen, onClose, selectedItem }) => {
 
     useEffect(() => {
         if (!isOpen) return;
-
         fetchHistory();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedItem, isOpen]);
 
     return (
@@ -41,34 +44,32 @@ const BorrowedHistoryDialog = ({ isOpen, onClose, selectedItem }) => {
                     <p className="text-center">Loading...</p>
                 ) : error ? (
                     <p className="text-red-500 text-center">{error}</p>
-                ) : history.length > 0 ? (
+                ) : history ? (
                     <div className="overflow-x-auto">
                         <Table>
                             <TableHeader>
                                 <TableRow>
                                     <TableHead>Borrower</TableHead>
+                                    <TableHead>Request Date</TableHead>
                                     <TableHead>Status</TableHead>
-                                    <TableHead>Quantity</TableHead>
+                                    <TableHead>Qty</TableHead>
                                     <TableHead>Condition Out</TableHead>
                                     <TableHead>Condition In</TableHead>
                                     <TableHead>Damage Notes</TableHead>
-                                    <TableHead>Borrowed Date</TableHead>
                                     <TableHead>Returned Date</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {history.map((item, index) => (
-                                    <TableRow key={index}>
-                                        <TableCell>{item.borrower_name}</TableCell>
-                                        <TableCell>{item.status}</TableCell>
-                                        <TableCell>{item.quantity}</TableCell>
-                                        <TableCell>{item.item_condition_out}</TableCell>
-                                        <TableCell>{item.item_condition_in || "Not Returned"}</TableCell>
-                                        <TableCell>{item.damage_notes || "None"}</TableCell>
-                                        <TableCell>{item.date_created}</TableCell>
-                                        <TableCell>{item.returned_date || "Not Returned"}</TableCell>
-                                    </TableRow>
-                                ))}
+                                <TableRow>
+                                    <TableCell>{history.requested_by}</TableCell>
+                                    <TableCell>{history.request_date}</TableCell>
+                                    <TableCell>{history.request_status}</TableCell>
+                                    <TableCell>1</TableCell> {/* Assuming 1 item per request unless specified */}
+                                    <TableCell>{history.item_condition_out}</TableCell>
+                                    <TableCell>{history.item_condition_in || "Not Returned"}</TableCell>
+                                    <TableCell>{history.damage_notes || "None"}</TableCell>
+                                    <TableCell>{history.returned_date || "Not Returned"}</TableCell>
+                                </TableRow>
                             </TableBody>
                         </Table>
                     </div>

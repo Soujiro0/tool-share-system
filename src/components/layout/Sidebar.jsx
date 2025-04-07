@@ -15,21 +15,21 @@ const Sidebar = () => {
     const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
     const baseAdminMenu = [
-        { name: "Dashboard", icon: "chart-line", to: "/admin-dashboard" },
+        // { name: "Dashboard", icon: "chart-line", to: "/admin-dashboard" },
         { name: "Inventory", icon: "boxes", to: "/inventory" },
-        { name: "History", icon: "clock-rotate-left", to: "/history" },
+        // { name: "History", icon: "clock-rotate-left", to: "/history" },
         { name: "Request Trasactions", icon: "clipboard", to: "/request-transactions" }
     ];
 
     const instructorMenu = [
-        { name: "Dashboard", icon: "chart-line", to: "/instructor-dashboard" },
+        // { name: "Dashboard", icon: "chart-line", to: "/instructor-dashboard" },
         { name: "Request Borrow", icon: "hand-holding", to: "/request-borrow" },
         { name: "Your Requests", icon: "list", to: "/your-requests" },
     ];
 
     let menuItems = [];
 
-    if (auth.user?.role === "SUPER ADMIN") {
+    if (auth.user?.role === "SUPER_ADMIN") {
         menuItems = [...baseAdminMenu];
         menuItems.splice(1, 0, {
             name: "Manage Accounts",

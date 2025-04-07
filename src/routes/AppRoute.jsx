@@ -6,10 +6,8 @@ import { Outlet, Route, Routes } from "react-router-dom";
 import Sidebar from "../components/layout/Sidebar";
 import Inventory from "../pages/Admin/Inventory";
 import ManageAccounts from "../pages/Admin/ManageAccounts";
-import AdminLogin from "../pages/AdminLogin";
 import AdminDashboard from "../pages/Dashboards/AdminDashboard";
 import InstructorDashboard from "../pages/Dashboards/InstructorDashboard";
-import InstructorLogin from "../pages/InstructorLogin";
 import Landing from "../pages/Landing";
 import ProtectedRoute from "./ProtectedRoute";
 
@@ -67,8 +65,6 @@ const AppRoute = () => {
 
             {/* Public Routes */}
             <Route path="/" element={<Landing />} />
-            <Route path="/admin" element={<AdminLogin />} />
-            <Route path="/instructor" element={<InstructorLogin />} />
         </Routes>
     );
 };

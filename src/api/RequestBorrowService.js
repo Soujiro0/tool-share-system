@@ -50,9 +50,27 @@ export async function createRequest(requestsData) {
     }
 }
 
-export async function updateRequest(requestId, updatedData) {
+export async function updateRequestFaculty(requestId, updatedData) {
     try {
-        const response = await fetch(`${API_BASE}/borrow-request.php/${requestId}`, {
+        const response = await fetch(`${API_BASE}/borrow-request.php/faculty/${requestId}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(updatedData),
+        });
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error("Error Updating Requests", error);
+        throw error;
+    }
+}
+
+export async function approveRequestByAdmin(requestId, updatedData) {
+    try {
+        const response = await fetch(`${API_BASE}/borrow-request.php/admin/${requestId}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -84,3 +102,4 @@ export async function deleteRequest(requestId) {
         throw error;
     }
 }
+

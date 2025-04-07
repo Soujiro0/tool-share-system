@@ -1,140 +1,177 @@
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import PropTypes from "prop-types";
 import { useState } from "react";
 
+const defaultUnit = {
+    brand: "",
+    model: "",
+    specification: "",
+    item_condition: "GOOD",
+    quantity: 1,
+};
+
 const AddItemDialog = ({ isOpen, onClose, onSave }) => {
+    const [hasMultipleUnits, setHasMultipleUnits] = useState(false);
     const [formData, setFormData] = useState({
         name: "",
-        property_no: null,
         category_id: "",
-        quantity: 1,
         unit: "",
-        brand: null,
-        model: null,
-        status: "AVAILABLE",
-        item_condition: "GOOD",
-        acquisition_date: undefined,
-        specification: undefined
+        acquisition_date: "",
+        units: [{ ...defaultUnit }],
     });
 
-    const handleChange = (e) => {
+    const handleBaseChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    const handleUnitChange = (index, field, value) => {
+        const updatedUnits = [...formData.units];
+        updatedUnits[index][field] = value;
+        setFormData({ ...formData, units: updatedUnits });
+    };
+
+    const addUnit = () => {
+        setFormData({ ...formData, units: [...formData.units, { ...defaultUnit }] });
+    };
+
+    const removeUnit = (index) => {
+        const updatedUnits = formData.units.filter((_, i) => i !== index);
+        setFormData({ ...formData, units: updatedUnits });
     };
 
     const handleSave = () => {
         onSave(formData);
+        setFormData({
+            name: "",
+            category_id: "",
+            unit: "",
+            acquisition_date: "",
+            units: [{ ...defaultUnit }],
+        });
         onClose();
     };
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent>
+            <DialogContent className="max-w-2xl">
                 <DialogHeader>
                     <DialogTitle>Add New Item</DialogTitle>
                 </DialogHeader>
 
-                <div className="grid gap-4">
-                    {/* Item Name */}
+                <div className="grid gap-2">
                     <div className="flex flex-col gap-2">
                         <Label>Item Name</Label>
-                        <Input name="name" value={formData.name} onChange={handleChange} placeholder="Item Name" required />
-                    </div>
-
-                    {/* Property Number */}
-                    <div className="flex flex-col gap-2">
-                        <Label>Property No.</Label>
-                        <Input name="property_no" value={formData.property_no} onChange={handleChange} placeholder="(Optional)" />
-                    </div>
-
-                    {/* Category ID */}
-                    <div className="flex flex-col gap-2">
-                        <Label>Category</Label>
-                        <Input name="category_id" value={formData.category_id} onChange={handleChange} placeholder="Category ID" required />
+                        <Input name="name" value={formData.name} onChange={handleBaseChange} required />
                     </div>
 
                     <div className="flex flex-col gap-2">
-                        <Label>Specification</Label>
-                        <Textarea className="resize-none" name="specification" value={formData.specification} onChange={handleChange} placeholder="Item Specification"/>
+                        <Label>Category ID</Label>
+                        <Input name="category_id" value={formData.category_id} onChange={handleBaseChange} required />
                     </div>
 
-                    <div className="flex gap-4">
-                        {/* Quantity */}
-                        <div className="flex flex-col gap-2">
-                            <Label>Quantity</Label>
-                            <Input type="number" name="quantity" value={formData.quantity} onChange={handleChange} min="1" required />
-                        </div>
-
-                        {/* Unit */}
-                        <div className="flex flex-col gap-2">
-                            <Label>Unit</Label>
-                            <Input name="unit" value={formData.unit} onChange={handleChange} placeholder="e.g., pcs, sets" required />
-                        </div>
+                    <div className="flex flex-col gap-2">
+                        <Label>Unit</Label>
+                        <Input name="unit" value={formData.unit} onChange={handleBaseChange} placeholder="e.g., pcs, sets" required />
                     </div>
 
-                    <div className="flex gap-4">
-                        {/* Brand */}
-                        <div className="flex flex-col gap-2">
-                            <Label>Brand</Label>
-                            <Input type="text" name="brand" value={formData.brand} onChange={handleChange} placeholder="(Optional)" />
-                        </div>
-
-                        {/* Model */}
-                        <div className="flex flex-col gap-2">
-                            <Label>Model</Label>
-                            <Input name="model" value={formData.model} onChange={handleChange} placeholder="(Optional)" />
-                        </div>
-                    </div>
-
-                    <div className="flex gap-4">
-                        {/* Status */}
-                        <div className="flex flex-col gap-2">
-                            <Label>Status</Label>
-                            <Select value={formData.status} onValueChange={(value) => setFormData({ ...formData, status: value })}>
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Select status" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="AVAILABLE">Available</SelectItem>
-                                    <SelectItem value="BORROWED">Borrowed</SelectItem>
-                                    <SelectItem value="DAMAGED">Damaged</SelectItem>
-                                    <SelectItem value="NO STOCK">No Stock</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
-
-                        {/* Item Condition */}
-                        <div className="flex flex-col gap-2">
-                            <Label>Condition</Label>
-                            <Select value={formData.item_condition} onValueChange={(value) => setFormData({ ...formData, item_condition: value })}>
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Select condition" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="GOOD">Good</SelectItem>
-                                    <SelectItem value="FAIR">Fair</SelectItem>
-                                    <SelectItem value="NEEDS REPAIR">Needs Repair</SelectItem>
-                                    <SelectItem value="DAMAGED">Damaged</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
-                    </div>
-
-                    {/* Acquisition Date */}
                     <div className="flex flex-col gap-2">
                         <Label>Acquisition Date</Label>
-                        <Input type="date" name="acquisition_date" value={formData.acquisition_date} onChange={handleChange} />
+                        <Input type="date" name="acquisition_date" value={formData.acquisition_date} onChange={handleBaseChange} />
                     </div>
-                </div>
 
-                {/* Save Button */}
-                <Button className="w-full mt-4" onClick={handleSave}>
-                    Add Item
-                </Button>
+                    <div className="flex items-center gap-2">
+                        <Checkbox
+                            id="hasMultiple"
+                            checked={hasMultipleUnits}
+                            onCheckedChange={(checked) => {
+                                setHasMultipleUnits(checked);
+                                if (!checked) {
+                                    setFormData({ ...formData, units: [{ ...defaultUnit }] });
+                                }
+                            }}
+                        />
+                        <Label htmlFor="hasMultiple">Has multiple unit variants?</Label>
+                    </div>
+
+                    <div className="flex flex-col gap-4">
+                        <Label>Units</Label>
+                        <ScrollArea className="h-72">
+                            {" "}
+                            {/* Set the height to make it scrollable */}
+                            {formData.units.map((unit, index) => (
+                                <div key={index} className="border p-4 rounded-md space-y-3 bg-muted/20">
+                                    <div className="grid md:grid-cols-2 gap-4">
+                                        <div className="flex flex-col gap-2">
+                                            <Label>Brand</Label>
+                                            <Input value={unit.brand} onChange={(e) => handleUnitChange(index, "brand", e.target.value)} />
+                                        </div>
+                                        <div className="flex flex-col gap-2">
+                                            <Label>Model</Label>
+                                            <Input value={unit.model} onChange={(e) => handleUnitChange(index, "model", e.target.value)} />
+                                        </div>
+                                        <div className="flex flex-col gap-2">
+                                            <Label>Specification</Label>
+                                            <Textarea
+                                                className="resize-none"
+                                                value={unit.specification}
+                                                onChange={(e) => handleUnitChange(index, "specification", e.target.value)}
+                                            />
+                                        </div>
+                                        <div className="flex flex-col gap-2">
+                                            <Label>Condition</Label>
+                                            <Select
+                                                value={unit.item_condition}
+                                                onValueChange={(val) => handleUnitChange(index, "item_condition", val)}
+                                            >
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Condition" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="EXCELLENT">Excellent</SelectItem>
+                                                    <SelectItem value="GOOD">Good</SelectItem>
+                                                    <SelectItem value="POOR">Poor</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                        <div className="flex flex-col gap-2">
+                                            <Label>Quantity</Label>
+                                            <Input
+                                                type="number"
+                                                value={unit.quantity}
+                                                onChange={(e) => handleUnitChange(index, "quantity", e.target.value)}
+                                                min="1"
+                                            />
+                                        </div>
+                                    </div>
+                                    {hasMultipleUnits && formData.units.length > 1 && (
+                                        <div className="text-right">
+                                            <Button variant="destructive" size="sm" onClick={() => removeUnit(index)}>
+                                                Remove Unit
+                                            </Button>
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                        </ScrollArea>
+                    </div>
+
+                    {hasMultipleUnits && (
+                        <Button variant="outline" onClick={addUnit}>
+                            + Add Another Unit
+                        </Button>
+                    )}
+
+                    <Button className="w-full mt-4" onClick={handleSave}>
+                        Save Item
+                    </Button>
+                </div>
             </DialogContent>
         </Dialog>
     );
